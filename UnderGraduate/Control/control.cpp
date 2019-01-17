@@ -101,6 +101,9 @@ void Control::Initialize()
     QPalette backPalette;
     backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
     ui->lbl_status_pic->setPalette(backPalette);
+
+    QFile csvFile(OutputPath);
+    csvFile.remove();
 }
 
 void Control::ConfigureDevice()
@@ -156,7 +159,32 @@ void Control::TimerTicked()
     {
         return;
     }
-    graph->Chart(scaledData, configure.channelCount, 1, 10 / 1000.0);
+    temperature[0] = scaledData[0]-scaledData[2];
+    temperature[1] = scaledData[0];
+    temperature[2] = scaledData[2];
+    //graph->Chart(scaledData, configure.channelCount, 1, 10 / 1000.0);
+    graph->Chart(temperature, 1, 1, 10 / 1000.0);
+
+    int duty_status;
+    if(mode == 1)
+        duty_status = 1;
+    else if(mode == 3)
+        duty_status = 2;
+    else
+    {
+        duty_status = counter_open>0?1:2;
+    }
+    QString str = tr("");
+    str.sprintf("%.4f", scaledData[0]);
+    qDebug()<<scaledData[0];
+    qDebug()<<duty_status;
+    QFile csvFile(OutputPath);
+    QTextStream textStream(&csvFile);
+    if (csvFile.open(QIODevice::Text | QIODevice::Append))
+    {
+        textStream<<str<<"\t"<<duty_status<<endl;
+        csvFile.close();
+    }
 }
 
 void Control::sld_open_change(int value)

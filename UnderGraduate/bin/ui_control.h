@@ -67,11 +67,11 @@ public:
         lbl_temp->setStyleSheet(QString::fromUtf8("font: 12pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_status = new QLabel(centralWidget);
         lbl_status->setObjectName(QStringLiteral("lbl_status"));
-        lbl_status->setGeometry(QRect(660, 470, 41, 21));
+        lbl_status->setGeometry(QRect(500, 480, 41, 21));
         lbl_status->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_temp_end = new QPushButton(centralWidget);
         btn_temp_end->setObjectName(QStringLiteral("btn_temp_end"));
-        btn_temp_end->setGeometry(QRect(680, 420, 131, 23));
+        btn_temp_end->setGeometry(QRect(700, 470, 131, 23));
         btn_temp_end->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         sld_open = new QSlider(centralWidget);
         sld_open->setObjectName(QStringLiteral("sld_open"));
@@ -96,11 +96,11 @@ public:
         sld_ratio->setOrientation(Qt::Horizontal);
         btn_duty = new QPushButton(centralWidget);
         btn_duty->setObjectName(QStringLiteral("btn_duty"));
-        btn_duty->setGeometry(QRect(550, 410, 91, 23));
+        btn_duty->setGeometry(QRect(590, 410, 91, 23));
         btn_duty->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_status_pic = new QLabel(centralWidget);
         lbl_status_pic->setObjectName(QStringLiteral("lbl_status_pic"));
-        lbl_status_pic->setGeometry(QRect(710, 460, 28, 28));
+        lbl_status_pic->setGeometry(QRect(550, 470, 28, 28));
         lbl_status_pic->setAutoFillBackground(true);
         lbl_status_pic->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_ratio_show = new QLabel(centralWidget);
@@ -142,7 +142,7 @@ public:
         lbl_ratio_present->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_open = new QPushButton(centralWidget);
         btn_open->setObjectName(QStringLiteral("btn_open"));
-        btn_open->setGeometry(QRect(550, 440, 91, 23));
+        btn_open->setGeometry(QRect(590, 440, 91, 23));
         btn_open->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_x_present = new QLabel(centralWidget);
         lbl_x_present->setObjectName(QStringLiteral("lbl_x_present"));
@@ -158,7 +158,7 @@ public:
         lbl_center_show->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_temp_pause = new QPushButton(centralWidget);
         btn_temp_pause->setObjectName(QStringLiteral("btn_temp_pause"));
-        btn_temp_pause->setGeometry(QRect(680, 390, 131, 23));
+        btn_temp_pause->setGeometry(QRect(700, 440, 131, 23));
         btn_temp_pause->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_ratio = new QLabel(centralWidget);
         lbl_ratio->setObjectName(QStringLiteral("lbl_ratio"));
@@ -166,7 +166,7 @@ public:
         lbl_ratio->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_temp_start = new QPushButton(centralWidget);
         btn_temp_start->setObjectName(QStringLiteral("btn_temp_start"));
-        btn_temp_start->setGeometry(QRect(680, 360, 131, 23));
+        btn_temp_start->setGeometry(QRect(700, 410, 131, 23));
         btn_temp_start->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_ratio_2 = new QLabel(centralWidget);
         lbl_ratio_2->setObjectName(QStringLiteral("lbl_ratio_2"));
@@ -191,7 +191,7 @@ public:
         lbl_y_min->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_close = new QPushButton(centralWidget);
         btn_close->setObjectName(QStringLiteral("btn_close"));
-        btn_close->setGeometry(QRect(550, 470, 91, 23));
+        btn_close->setGeometry(QRect(590, 470, 91, 23));
         btn_close->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_y_mid = new QLabel(centralWidget);
         lbl_y_mid->setObjectName(QStringLiteral("lbl_y_mid"));

@@ -2,10 +2,13 @@
 #define CONTROL_H
 
 #include <QMainWindow>
+#include <QFile>
+#include <QString>
+#include <QTextStream>
 #include "../common/simplegraph.h"
 #include "configuredialog.h"
 
-
+const QString OutputPath(".\\output.txt");
 
 namespace Ui {
 class Control;
@@ -31,6 +34,7 @@ private:
     ConfigureParameter configure;
     InstantAiCtrl *instantAiCtrl;
     double scaledData[16];
+    double temperature[3];
     double m_yCordRangeMid;
     QTimer *timer;
 
