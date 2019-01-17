@@ -100,7 +100,8 @@ public:
         btn_duty->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_status_pic = new QLabel(centralWidget);
         lbl_status_pic->setObjectName(QStringLiteral("lbl_status_pic"));
-        lbl_status_pic->setGeometry(QRect(710, 460, 50, 50));
+        lbl_status_pic->setGeometry(QRect(710, 460, 28, 28));
+        lbl_status_pic->setAutoFillBackground(true);
         lbl_status_pic->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_ratio_show = new QLabel(centralWidget);
         lbl_ratio_show->setObjectName(QStringLiteral("lbl_ratio_show"));

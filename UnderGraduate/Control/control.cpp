@@ -2,6 +2,7 @@
 #include "ui_control.h"
 #include <QMessageBox>
 #include <QTimer>
+#include <QDebug>
 
 Control::Control(QWidget *parent) :
     QMainWindow(parent),
@@ -33,7 +34,6 @@ Control::Control(QWidget *parent) :
     connect(ui->btn_duty, SIGNAL(clicked()), this, SLOT(btn_duty_click()));
     connect(ui->btn_open, SIGNAL(clicked()), this, SLOT(btn_open_click()));
     connect(ui->btn_close, SIGNAL(clicked()), this, SLOT(btn_close_click()));
-
 }
 
 Control::~Control()
@@ -94,6 +94,13 @@ void Control::Initialize()
     ui->btn_temp_end->setEnabled(false);
 
     mode = 1;
+
+    ui->lbl_status_pic->setAutoFillBackground(true);
+    QPixmap pixMap_open(":/Resources/open.png");
+    QPixmap pixMap_close(":/Resources/close.png");
+    QPalette backPalette;
+    backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+    ui->lbl_status_pic->setPalette(backPalette);
 }
 
 void Control::ConfigureDevice()
@@ -157,6 +164,8 @@ void Control::sld_open_change(int value)
     QString str = tr("");
     str.sprintf("%.2f", value/100.0);
     ui->lbl_open_show->setText(str+tr("s"));
+    counter_open = qRound((ui->sld_open->value()/100.0)*100);
+    counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/1000.0)*100);
 }
 
 void Control::sld_ratio_change(int value)
@@ -166,6 +175,8 @@ void Control::sld_ratio_change(int value)
     ui->lbl_ratio_show->setText(str);
     str.sprintf("%.2f", 1.0/(1.0+ui->sld_ratio->value()/10.0));
     ui->lbl_ratio_present->setText(str);
+    counter_open = qRound((ui->sld_open->value()/100.0)*100);
+    counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/1000.0)*100);
 }
 
 void Control::sld_x_scale_change(int value)
@@ -241,7 +252,7 @@ void Control::btn_duty_click()
 {
     mode = 2;
     counter_open = qRound((ui->sld_open->value()/100.0)*100);
-    counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/100.0)*100);
+    counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/1000.0)*100);
 }
 
 void Control::btn_open_click()
@@ -256,6 +267,9 @@ void Control::btn_close_click()
 
 void Control::DutyControl()
 {
+    QPixmap pixMap_open(":/Resources/open.png");
+    QPixmap pixMap_close(":/Resources/close.png");
+    QPalette backPalette;
     if(mode == 1)
     {
         quint8 data_tmp[1];
@@ -263,6 +277,9 @@ void Control::DutyControl()
         ErrorCode errorCode = Success;
         errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
         CheckError(errorCode);
+        backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+        ui->lbl_status_pic->setPalette(backPalette);
+
     }
     else if (mode == 3)
     {
@@ -271,6 +288,8 @@ void Control::DutyControl()
         ErrorCode errorCode = Success;
         errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
         CheckError(errorCode);
+        backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
+        ui->lbl_status_pic->setPalette(backPalette);
     }
     else
     {
@@ -282,20 +301,31 @@ void Control::DutyControl()
             ErrorCode errorCode = Success;
             errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
             CheckError(errorCode);
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+            ui->lbl_status_pic->setPalette(backPalette);
         }
-        else if (counter_close>0)
+        else if (counter_open == 0 && counter_close>0)
         {
             counter_close--;
             data_tmp[0] = 0x00;
             ErrorCode errorCode = Success;
             errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
             CheckError(errorCode);
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
+            ui->lbl_status_pic->setPalette(backPalette);
+        }
+        else if (counter_open == 0 && counter_close == 0)
+        {
+            counter_open = qRound((ui->sld_open->value()/100.0)*100);
+            counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/1000.0)*100);
         }
         else
         {
             counter_open = qRound((ui->sld_open->value()/100.0)*100);
-            counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/100.0)*100);
+            counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/1000.0)*100);
         }
+        qDebug()<<counter_open<<" and "<<counter_close;
+
     }
 }
 

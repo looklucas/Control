@@ -113,7 +113,7 @@ void ConfigureDialog::DeviceChanged(int index)
 
 	//Set the default value.
 	ui.cmbChannelStart->setCurrentIndex(0);
-	ui.cmbChannelCount->setCurrentIndex(1);
+    ui.cmbChannelCount->setCurrentIndex(0);
 	ui.cmbValueRange->setCurrentIndex(0);
 }
 

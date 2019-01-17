@@ -139,7 +139,7 @@ public:
 
     void retranslateUi(QDialog *ConfigureDialog)
     {
-        ConfigureDialog->setWindowTitle(QApplication::translate("ConfigureDialog", "Instant AI-Configuration", nullptr));
+        ConfigureDialog->setWindowTitle(QApplication::translate("ConfigureDialog", "Select Device \342\200\224\342\200\224 DaiQizheng", nullptr));
         lblDevice->setText(QApplication::translate("ConfigureDialog", "Device:", nullptr));
         btnOK->setText(QApplication::translate("ConfigureDialog", "OK", nullptr));
         btnCancel->setText(QApplication::translate("ConfigureDialog", "Cancel", nullptr));

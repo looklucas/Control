@@ -5,6 +5,8 @@
 #include "../common/simplegraph.h"
 #include "configuredialog.h"
 
+
+
 namespace Ui {
 class Control;
 }
@@ -37,6 +39,7 @@ private:
     QTimer *timer_control;
     int counter_open;
     int counter_close;
+
 
 private slots:
     void TimerTicked();

@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Instant AI-Configuration</string>
+   <string>Select Device —— DaiQizheng</string>
   </property>
   <widget class="QComboBox" name="cmbDevice">
    <property name="geometry">
