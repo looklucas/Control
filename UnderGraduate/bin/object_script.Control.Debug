@@ -1,0 +1,12 @@
+INPUT(
+./debug\main.o
+./debug\control.o
+./debug\configuredialog.o
+./debug\DioPortUI.o
+./debug\simplegraph.o
+./debug\qrc_control.o
+./debug\moc_control.o
+./debug\moc_configuredialog.o
+./debug\moc_DioPortUI.o
+./debug\moc_simplegraph.o
+);
