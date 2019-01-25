@@ -9,13 +9,12 @@
 #include "configuredialog.h"
 #include <QDateTime>
 
-const QString OutputPath(".\\output.txt");
+const QString OutputPath1(".\\");
+const QString OutputPath2("_Data.txt");
+const QDateTime current_date_time =QDateTime::currentDateTime();
+const QString current_date =current_date_time.toString("yyyy_MM_dd_hh_mm_ss");
+const QString OutputPath = OutputPath1 + current_date + OutputPath2;
 
-/*
-    QDateTime current_date_time =QDateTime::currentDateTime();
-    QString current_date =current_date_time.toString("yyyy.MM.dd hh:mm:ss.zzz");
-    qDebug()<<current_date;
-*/
 namespace Ui {
 class Control;
 }
@@ -63,9 +62,10 @@ private slots:
     void sld_open_change(int value);
     void sld_ratio_change(int value);
     void sld_x_scale_change(int value);
-    //void sld_x_center_change(int value);
     void sld_y_scale_change(int value);
     void sld_y_center_change(int value);
+    void sld_y_scale_change_2(int value);
+    void sld_y_center_change_2(int value);
     void btn_start_click();
     void btn_pause_click();
     void btn_end_click();
