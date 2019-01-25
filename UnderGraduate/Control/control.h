@@ -7,9 +7,15 @@
 #include <QTextStream>
 #include "../common/simplegraph.h"
 #include "configuredialog.h"
+#include <QDateTime>
 
 const QString OutputPath(".\\output.txt");
 
+/*
+    QDateTime current_date_time =QDateTime::currentDateTime();
+    QString current_date =current_date_time.toString("yyyy.MM.dd hh:mm:ss.zzz");
+    qDebug()<<current_date;
+*/
 namespace Ui {
 class Control;
 }
@@ -29,15 +35,21 @@ public:
 
 private:
     Ui::Control *ui;
-    SimpleGraph *graph;
+    SimpleGraph *graph_t;
+    SimpleGraph *graph_p;
     ConfigureDialog *configDialog;
     ConfigureParameter configure;
     InstantAiCtrl *instantAiCtrl;
     double scaledData[16];
-    double temperature[3];
+    double temperature[4];
+    double pressure[2];
     double m_yCordRangeMid;
+    double m_yCordRangeMid_2;
+    double Time_total;
     QTimer *timer;
 
+    InstantDiCtrl *instantDiCtrl;
+    quint8 datain[1];
     InstantDoCtrl *instantDoCtrl;
     int mode;
     QTimer *timer_control;
@@ -51,6 +63,7 @@ private slots:
     void sld_open_change(int value);
     void sld_ratio_change(int value);
     void sld_x_scale_change(int value);
+    //void sld_x_center_change(int value);
     void sld_y_scale_change(int value);
     void sld_y_center_change(int value);
     void btn_start_click();
