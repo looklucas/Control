@@ -54,13 +54,20 @@ private:
     QTimer *timer_control;
     int counter_open;
     int counter_close;
+    double old_ratio;
+    double old_open;
+
+    QDateTime update_time;
+    QString update_time_string;
 
 
 private slots:
     void TimerTicked();
     void DutyControl();
     void sld_open_change(int value);
+    void edit_open_change();
     void sld_ratio_change(int value);
+    void edit_ratio_change();
     void sld_x_scale_change(int value);
     void sld_y_scale_change(int value);
     void sld_y_center_change(int value);

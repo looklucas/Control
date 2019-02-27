@@ -21,6 +21,7 @@ Control::Control(QWidget *parent) :
     {
         scaledData[i] = 0;
     }
+    
 
     timer = new QTimer(this);
     timer_control = new QTimer(this);
@@ -30,7 +31,11 @@ Control::Control(QWidget *parent) :
     connect(timer_control, SIGNAL(timeout()), this, SLOT(DutyControl()));
 
     connect(ui->sld_open, SIGNAL(valueChanged(int)), this, SLOT(sld_open_change(int)));
+    connect(ui->lbl_open_show, SIGNAL(editingFinished()), this, SLOT(edit_open_change()));
+
     connect(ui->sld_ratio, SIGNAL(valueChanged(int)), this, SLOT(sld_ratio_change(int)));
+    connect(ui->lbl_ratio_show, SIGNAL(editingFinished()), this, SLOT(edit_ratio_change()));
+
     connect(ui->sld_x_scale, SIGNAL(valueChanged(int)), this, SLOT(sld_x_scale_change(int)));
     connect(ui->sld_y_scale, SIGNAL(valueChanged(int)), this, SLOT(sld_y_scale_change(int)));
     connect(ui->sld_y_center, SIGNAL(valueChanged(int)), this, SLOT(sld_y_center_change(int)));
@@ -72,11 +77,13 @@ void Control::Initialize()
     ui->sld_open->setValue(75);
     QString str = tr("");
     str.sprintf("%.2f", ui->sld_open->value()/100.0);
-    ui->lbl_open_show->setText(str+tr("s"));
+    ui->lbl_open_show->setText(str);
+    old_open = ui->sld_open->value()/100.0;
 
     ui->sld_ratio->setValue(15);
     str.sprintf("%.1f", ui->sld_ratio->value()/10.0);
     ui->lbl_ratio_show->setText(str);
+    old_ratio = ui->sld_ratio->value()/10.0;
 
     str.sprintf("%.2f", 1.0/(1.0+ui->sld_ratio->value()/10.0));
     ui->lbl_ratio_present->setText(str);
@@ -87,9 +94,9 @@ void Control::Initialize()
     m_yCordRangeMid = ui->sld_y_center->value()-150.0;
     graph_t->Clear();
     graph_p->m_xCordTimeDiv = (ui->sld_x_scale->value()/10.0) * 1000 / 10;
-    graph_p->m_yCordRangeMax = 50;
-    graph_p->m_yCordRangeMin = -50;
-    m_yCordRangeMid_2 = ui->sld_y_center_2->value()-50.0;
+    graph_p->m_yCordRangeMax = 1;
+    graph_p->m_yCordRangeMin = 0;
+    m_yCordRangeMid_2 = ui->sld_y_center_2->value()/1000.0;
     graph_p->Clear();
 
 
@@ -151,7 +158,6 @@ void Control::Initialize()
         item2->setTextAlignment(Qt::AlignCenter);
     }*/
     QFile csvFile(OutputPath);
-    csvFile.remove();
     qDebug()<<OutputPath;
 }
 
@@ -221,14 +227,16 @@ void Control::TimerTicked()
     ui->lbl_time->setText(str+tr("s"));
 
     temperature[0] = scaledData[0];
-    temperature[1] = scaledData[1];
-    temperature[2] = scaledData[2];
-    temperature[3] = scaledData[3];
-    graph_t->Chart(temperature, 4, 1, 10 / 1000.0);
+    temperature[1] = 0;
+    temperature[2] = 0;
+    temperature[3] = 0;
+    graph_t->Chart(temperature, 1, 1, 10 / 1000.0);
 
     pressure[0] = scaledData[4];
-    pressure[1] = scaledData[5];
-    graph_p->Chart(pressure, 2, 1, 10 / 1000.0);
+    double tmp[2];
+    tmp[0] = pressure[0]/5.0*6.0;
+    tmp[1] = 0;
+    graph_p->Chart(tmp, 1, 1, 10 / 1000.0);
 
     QListWidgetItem *item;
     QString dataStr = tr("0.00");
@@ -283,14 +291,17 @@ void Control::TimerTicked()
     {
         duty_status = counter_open>0?1:2;
     }
-    str.sprintf("%.4f", scaledData[0]);
-    qDebug()<<scaledData[0];
-    qDebug()<<duty_status;
+    str.sprintf("%.4f", scaledData[4]);
+    //qDebug()<<scaledData[4];
+    //qDebug()<<duty_status;
+    update_time = QDateTime::currentDateTime();
+    update_time_string = update_time.toString("yyyy_MM_dd_hh_mm_ss.zzz");
+
     QFile csvFile(OutputPath);
     QTextStream textStream(&csvFile);
     if (csvFile.open(QIODevice::Text | QIODevice::Append))
     {
-        textStream<<str<<"\t"<<duty_status<<endl;
+        textStream<<update_time_string<<"\t"<<str<<"\t"<<duty_status<<endl;
         csvFile.close();
     }
 }
@@ -300,9 +311,32 @@ void Control::sld_open_change(int value)
 {
     QString str = tr("");
     str.sprintf("%.2f", value/100.0);
-    ui->lbl_open_show->setText(str+tr("s"));
+    ui->lbl_open_show->setText(str);
+    old_open = value/100.0;
     counter_open = qRound((ui->sld_open->value()/100.0)*100);
     counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/1000.0)*100);
+}
+
+void Control::edit_open_change()
+{
+    double new_open = ui->lbl_open_show->text().toDouble();
+    //qDebug()<<new_open;
+    QString str = tr("");
+    if(new_open<0.1 || new_open>2)
+    {
+        new_open = old_open;
+    }
+    else
+    {
+        old_open = new_open;
+    }
+    str.sprintf("%.2f", new_open);
+    ui->lbl_open_show->setText(str);
+    counter_open = qRound((new_open)*100);
+    counter_close = qRound((new_open*old_ratio)*100);
+    ui->sld_open->setValue(new_open*100.0+0.55);
+    //qDebug()<<new_open;
+    //qDebug()<<ui->sld_open->value();
 }
 
 void Control::sld_ratio_change(int value)
@@ -310,10 +344,34 @@ void Control::sld_ratio_change(int value)
     QString str = tr("");
     str.sprintf("%.1f", value/10.0);
     ui->lbl_ratio_show->setText(str);
+    old_ratio = value/10.0;
     str.sprintf("%.2f", 1.0/(1.0+ui->sld_ratio->value()/10.0));
     ui->lbl_ratio_present->setText(str);
     counter_open = qRound((ui->sld_open->value()/100.0)*100);
     counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/1000.0)*100);
+}
+
+void Control::edit_ratio_change()
+{
+    double new_ratio = ui->lbl_ratio_show->text().toDouble();
+    //qDebug()<<new_open;
+    QString str = tr("");
+    if(new_ratio<0 || new_ratio>10)
+    {
+        new_ratio = old_open;
+    }
+    else
+    {
+        old_open = new_ratio;
+    }
+    str.sprintf("%.1f", new_ratio);
+    ui->lbl_ratio_show->setText(str);
+    str.sprintf("%.2f", 1.0/(1.0+new_ratio));
+    counter_open = qRound((old_open)*100);
+    counter_close = qRound((old_open*new_ratio)*100);
+    ui->sld_ratio->setValue(new_ratio*10.0+0.55);
+    //qDebug()<<new_ratio;
+    //qDebug()<<ui->sld_ratio->value();
 }
 
 void Control::sld_x_scale_change(int value)
@@ -344,17 +402,17 @@ void Control::sld_y_scale_change(int value)
 
 void Control::sld_y_scale_change_2(int value)
 {
-    graph_p->m_yCordRangeMax = m_yCordRangeMid_2 + value/2.0;
-    graph_p->m_yCordRangeMin = m_yCordRangeMid_2 - value/2.0;
+    graph_p->m_yCordRangeMax = m_yCordRangeMid_2 + value/100.0/2.0;
+    graph_p->m_yCordRangeMin = m_yCordRangeMid_2 - value/100.0/2.0;
 
     QString str = tr("");
     str.sprintf("%.2f", value/100.0);
     ui->lbl_scale_show_2->setText(str+tr("MPa"));
-    str.sprintf("%.2f", graph_p->m_yCordRangeMax/100.0);
+    str.sprintf("%.2f", graph_p->m_yCordRangeMax);
     ui->lbl_y_max_2->setText(str+tr("MPa"));
-    str.sprintf("%.2f", graph_p->m_yCordRangeMin/100.0);
+    str.sprintf("%.2f", graph_p->m_yCordRangeMin);
     ui->lbl_y_min_2->setText(str+tr("MPa"));
-    str.sprintf("%.2f", m_yCordRangeMid_2/100.0);
+    str.sprintf("%.2f", m_yCordRangeMid_2);
     ui->lbl_y_mid_2->setText(str+tr("MPa"));
 }
 
@@ -377,18 +435,18 @@ void Control::sld_y_center_change(int value)
 
 void Control::sld_y_center_change_2(int value)
 {
-    m_yCordRangeMid_2 = value-50;
-    graph_p->m_yCordRangeMax = m_yCordRangeMid_2 + ui->sld_y_scale_2->value()/2.0;
-    graph_p->m_yCordRangeMin = m_yCordRangeMid_2 - ui->sld_y_scale_2->value()/2.0;
+    m_yCordRangeMid_2 = value/1000.0;
+    graph_p->m_yCordRangeMax = m_yCordRangeMid_2 + ui->sld_y_scale_2->value()/100.0/2.0;
+    graph_p->m_yCordRangeMin = m_yCordRangeMid_2 - ui->sld_y_scale_2->value()/100.0/2.0;
 
     QString str = tr("");
-    str.sprintf("%.2f", value/100.0);
+    str.sprintf("%.2f", value/1000.0);
     ui->lbl_center_show_2->setText(str+tr("MPa"));
-    str.sprintf("%.2f", (graph_p->m_yCordRangeMax+50.0)/100.0);
+    str.sprintf("%.2f", graph_p->m_yCordRangeMax);
     ui->lbl_y_max_2->setText(str+tr("MPa"));
-    str.sprintf("%.2f", (graph_p->m_yCordRangeMin+50.0)/100.0);
+    str.sprintf("%.2f", graph_p->m_yCordRangeMin);
     ui->lbl_y_min_2->setText(str+tr("MPa"));
-    str.sprintf("%.2f", (m_yCordRangeMid_2+50.0)/100.0);
+    str.sprintf("%.2f", m_yCordRangeMid_2);
     ui->lbl_y_mid_2->setText(str+tr("MPa"));
 }
 
