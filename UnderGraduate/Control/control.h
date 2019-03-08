@@ -8,6 +8,8 @@
 #include "../common/simplegraph.h"
 #include "configuredialog.h"
 #include <QDateTime>
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 
 const QString OutputPath1(".\\");
 const QString OutputPath2("_Data.txt");
@@ -60,6 +62,8 @@ private:
     QDateTime update_time;
     QString update_time_string;
 
+    QSerialPort *flow_port;
+
 
 private slots:
     void TimerTicked();
@@ -79,6 +83,7 @@ private slots:
     void btn_duty_click();
     void btn_open_click();
     void btn_close_click();
+    void PortChanged(int value);
 };
 
 #endif // CONTROL_H

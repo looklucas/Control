@@ -48,7 +48,16 @@ Control::Control(QWidget *parent) :
     connect(ui->btn_duty, SIGNAL(clicked()), this, SLOT(btn_duty_click()));
     connect(ui->btn_open, SIGNAL(clicked()), this, SLOT(btn_open_click()));
     connect(ui->btn_close, SIGNAL(clicked()), this, SLOT(btn_close_click()));
+    connect(ui->cmb_port, SIGNAL(currentIndexChanged(int)), this, SLOT(PortChanged(int)));
 
+    flow_port = new QSerialPort(this);
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
+        qDebug() << "Name        : " << info.portName();
+        qDebug() << "Description : " << info.description();
+        qDebug() << "Manufacturer: " << info.manufacturer();
+        ui->cmb_port->addItem(info.portName());
+    }
 }
 
 Control::~Control()
@@ -65,6 +74,11 @@ Control::~Control()
     if (instantDoCtrl != nullptr)
     {
         instantDoCtrl->Dispose();
+    }
+    if(flow_port->isOpen())
+    {
+        flow_port->close();
+        //qDebug()<<"flow_port has been closed !";
     }
 }
 
@@ -134,11 +148,20 @@ void Control::Initialize()
         item2->setSizeHint(QSize(70, 20));
         item2->setTextAlignment(Qt::AlignCenter);
     }
+    ui->listWidget_3->clear();
+    QListWidgetItem *item3 = nullptr;
+    for (int i = 0; i < 1; i++)
+    {
+        item3 = new QListWidgetItem(tr("0.00"), ui->listWidget_3);
+        item3->setBackgroundColor(SimpleGraph::lineColor[2]);
+        item3->setSizeHint(QSize(70, 20));
+        item3->setTextAlignment(Qt::AlignCenter);
+    }
     QFile csvFile(OutputPath);
     QTextStream textStream(&csvFile);
     if (csvFile.open(QIODevice::Text | QIODevice::Append))
     {
-        textStream<<"Real-Time Sampling Data"<<"\t"<<"V1"<<"\t"<<"T(Celsius)"<<"\t"<<"V2"<<"\t"<<"P(MPa)"<<"\t"<<"Do"<<endl;
+        textStream<<"Real-Time Sampling Data"<<"\t"<<"V1"<<"\t"<<"T(Celsius)"<<"\t"<<"V2"<<"\t"<<"P(MPa)"<<"\t"<<"Do"<<"\t"<<"Flow(L/min)"<<endl;
         csvFile.close();
     }
 }
@@ -196,12 +219,56 @@ void Control::CheckError(ErrorCode errorCode)
     }
 }
 
+void Control::PortChanged(int value)
+{
+    flow_port->setPortName(ui->cmb_port->currentText());
+
+    //open port
+    if(flow_port->open(QIODevice::ReadWrite))
+    {
+        //设置波特率
+        flow_port->setBaudRate(9600);
+        //设置数据位数
+        flow_port->setDataBits(QSerialPort::Data8);
+        //设置奇偶校验
+        flow_port->setParity(QSerialPort::NoParity);
+        //设置停止位
+        flow_port->setStopBits(QSerialPort::OneStop);
+        //设置流控制
+        flow_port->setFlowControl(QSerialPort::NoFlowControl);
+    }
+    else
+    {
+        QMessageBox::about(nullptr, "提示", "测温相关串口没有打开！");
+        return;
+    }
+    qDebug()<<"current port name: "<<flow_port->portName();
+    qDebug()<<"info:              "<<flow_port->baudRate();
+}
+
 void Control::TimerTicked()
 {
+    QString str_f;
+    QPixmap pixMap_open(":/Resources/open.png");
+    QPixmap pixMap_close(":/Resources/close.png");
+    QPalette backPalette;
+    quint8 *portStates = new quint8[1];
+
+    //Read ports and calculate values
+    /*-----------------------------------------------------------------------------------------*/
+    {
     //Read instant_Ai voltage signals
     ErrorCode errorCode = Success;
     errorCode = instantAiCtrl->Read(configure.channelStart, configure.channelCount, scaledData);
     CheckError(errorCode);
+    if (errorCode != Success)
+    {
+        return;
+    }
+    //Read the status of Di
+    ErrorCode errorCode2 = Success;
+    errorCode2 = instantDiCtrl->Read(0, 1, portStates);
+    CheckError(errorCode2);
     if (errorCode != Success)
     {
         return;
@@ -213,10 +280,32 @@ void Control::TimerTicked()
     pressure[0] = scaledData[5]/5.0*6.0;
     graph_p->Chart(pressure, 1, 1, 10 / 1000.0);
 
-    //show the real-time temperature and pressure
+    //Read the flow at present
+    QByteArray read_flow;
+    if(flow_port->isOpen())
+    {
+        //qDebug()<<"flow_port is open ! ";
+        read_flow = flow_port->readAll();
+        if(!read_flow.isEmpty())
+        {
+            str_f=(read_flow);
+            //qDebug()<<str_f;
+        }
+    }
+    }/*----------------------------------------------------------------------------------------*/
+
+    //show the time, temperature, pressure and flow value
+    /*----------------------------------------------------------------------------------------*/
+    {
+    update_time = QDateTime::currentDateTime();
+    update_time_string = update_time.toString("yyyy_MM_dd_hh_mm_ss_z");
+    ui->lbl_time->setText(update_time.toString("hh")+tr(" : ")+update_time.toString("mm")+tr(" : ")+update_time.toString("ss"));
+
     QString str = tr("");
     QListWidgetItem *item;
     QString dataStr = tr("0.00");
+
+
     //for(int i = 0; i < 1; i++)
     {
         item = ui->listWidget->item(0);
@@ -228,6 +317,7 @@ void Control::TimerTicked()
         }
         item->setText(dataStr);
     }
+    item->setText(tr(""));
     //for(int i = 5; i < 6; i++)
     {
         item = ui->listWidget_2->item(0);
@@ -239,15 +329,17 @@ void Control::TimerTicked()
         }
         item->setText(dataStr);
     }
+    //show real-time flow
+    {
+        item = ui->listWidget_3->item(0);
+        dataStr = str_f;
+        if (str_f.length() > 7)
+        {
+            dataStr = str_f.left(7);
+        }
+        item->setText(dataStr);
+    }
 
-    //Read and show the status of Di
-    QPixmap pixMap_open(":/Resources/open.png");
-    QPixmap pixMap_close(":/Resources/close.png");
-    QPalette backPalette;
-    quint8 *portStates = new quint8[1];
-    ErrorCode errorCode2 = Success;
-    errorCode2 = instantDiCtrl->Read(0, 1, portStates);
-    CheckError(errorCode2);
     datain[0] = *portStates;
     if(datain[0] & 0x01)
     {
@@ -259,13 +351,11 @@ void Control::TimerTicked()
         backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
         ui->lbl_di_pic->setPalette(backPalette);
     }
-
-    //show the current time
-    update_time = QDateTime::currentDateTime();
-    update_time_string = update_time.toString("yyyy_MM_dd_hh_mm_ss_z");
-    ui->lbl_time->setText(update_time.toString("hh")+tr(" : ")+update_time.toString("mm")+tr(" : ")+update_time.toString("ss"));
+    }/*----------------------------------------------------------------------------------------*/
 
     //output the time, original voltage, pressure and Do status to txt
+    /*----------------------------------------------------------------------------------------*/
+    {
     int duty_status;
     if(mode == 1)
         duty_status = 1;
@@ -277,20 +367,32 @@ void Control::TimerTicked()
     }
 
     QString str_v1 = tr("");
-    str_v1.sprintf("%.4f", scaledData[0]);
+    //str_v1.sprintf("%.4f", scaledData[0]);
+    str_v1.sprintf("virtual");
+    QString str_t;
+    //str_t.sprintf("%.4f",temperature[0]);
+    str_t.sprintf("virtual");
+
     QString str_v2 = tr("");
     str_v2.sprintf("%.4f", scaledData[5]);
-    QString str_t;
-    str_t.sprintf("%.4f",temperature[0]);
     QString str_p;
     str_p.sprintf("%.4f",pressure[0]);
+
+    str_f = tr("virtual flow");
+
     QFile csvFile(OutputPath);
     QTextStream textStream(&csvFile);
     if (csvFile.open(QIODevice::Text | QIODevice::Append))
     {
-        textStream<<update_time_string<<"\t"<<str_v1<<"\t"<<str_t<<"\t"<<str_v2<<"\t"<<str_p<<"\t"<<duty_status<<endl;
+        textStream<<update_time_string
+                  <<"\t"<<str_v1<<"\t"<<str_t
+                  <<"\t"<<str_v2<<"\t"<<str_p
+                  <<"\t"<<duty_status
+                  <<"\t"<<str_f<<endl;
         csvFile.close();
     }
+    }
+    /*----------------------------------------------------------------------------------------*/
 }
 
 void Control::sld_x_scale_change(int value)
@@ -445,7 +547,7 @@ void Control::DutyControl()
     else
     {
         quint8 data_tmp[1];
-        if(counter_open>0 && counter_close>0)
+        if(counter_open>0 && counter_close>1)
         {
             counter_open--;
             data_tmp[0] = 0x01;
@@ -455,7 +557,7 @@ void Control::DutyControl()
             backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
             ui->lbl_do_pic->setPalette(backPalette);
         }
-        else if (counter_open == 0 && counter_close>0)
+        else if (counter_open == 0 && counter_close>1)
         {
             counter_close--;
             data_tmp[0] = 0x00;
@@ -465,7 +567,7 @@ void Control::DutyControl()
             backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
             ui->lbl_do_pic->setPalette(backPalette);
         }
-        else if (counter_open == 0 && counter_close == 0)
+        else if (counter_open == 0 && counter_close == 1)
         {
             counter_open = qRound((ui->sld_open->value()/100.0)*(1000/100.0));
             counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/1000.0)*(1000/100.0));
