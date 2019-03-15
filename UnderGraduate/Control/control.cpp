@@ -17,6 +17,7 @@ Control::Control(QWidget *parent) :
     graph_t->setFixedSize(ui->graphFrame->size());
     graph_p = new SimpleGraph(ui->graphFrame_2);
     graph_p->setFixedSize(ui->graphFrame_2->size());
+
     for (int i = 0; i < 16; i++)
     {
         scaledData[i] = 0;
@@ -25,31 +26,43 @@ Control::Control(QWidget *parent) :
 
     timer = new QTimer(this);
     timer_control = new QTimer(this);
-    Time_total = 0;
+    timer_control_2 = new QTimer(this);
 
+    //control the graph
     connect(timer, SIGNAL(timeout()), this, SLOT(TimerTicked()));
-    connect(timer_control, SIGNAL(timeout()), this, SLOT(DutyControl()));
-
-    connect(ui->sld_open, SIGNAL(valueChanged(int)), this, SLOT(sld_open_change(int)));
-    connect(ui->lbl_open_show, SIGNAL(editingFinished()), this, SLOT(edit_open_change()));
-
-    connect(ui->sld_ratio, SIGNAL(valueChanged(int)), this, SLOT(sld_ratio_change(int)));
-    connect(ui->lbl_ratio_show, SIGNAL(editingFinished()), this, SLOT(edit_ratio_change()));
-
     connect(ui->sld_x_scale, SIGNAL(valueChanged(int)), this, SLOT(sld_x_scale_change(int)));
     connect(ui->sld_y_scale, SIGNAL(valueChanged(int)), this, SLOT(sld_y_scale_change(int)));
     connect(ui->sld_y_center, SIGNAL(valueChanged(int)), this, SLOT(sld_y_center_change(int)));
     connect(ui->sld_y_scale_2, SIGNAL(valueChanged(int)), this, SLOT(sld_y_scale_change_2(int)));
     connect(ui->sld_y_center_2, SIGNAL(valueChanged(int)), this, SLOT(sld_y_center_change_2(int)));
 
-    connect(ui->btn_temp_start, SIGNAL(clicked()), this, SLOT(btn_start_click()));
-    connect(ui->btn_temp_pause, SIGNAL(clicked()), this, SLOT(btn_pause_click()));
-    connect(ui->btn_temp_end, SIGNAL(clicked()), this, SLOT(btn_end_click()));
+    //control the valve 1
+    connect(timer_control, SIGNAL(timeout()), this, SLOT(DutyControl()));
+    connect(ui->sld_cycle, SIGNAL(valueChanged(int)), this, SLOT(sld_cycle_change(int)));
+    connect(ui->lbl_cycle_show, SIGNAL(editingFinished()), this, SLOT(edit_cycle_change()));
+    connect(ui->sld_ratio, SIGNAL(valueChanged(int)), this, SLOT(sld_ratio_change(int)));
+    connect(ui->lbl_ratio_show, SIGNAL(editingFinished()), this, SLOT(edit_ratio_change()));
     connect(ui->btn_duty, SIGNAL(clicked()), this, SLOT(btn_duty_click()));
     connect(ui->btn_open, SIGNAL(clicked()), this, SLOT(btn_open_click()));
     connect(ui->btn_close, SIGNAL(clicked()), this, SLOT(btn_close_click()));
-    connect(ui->cmb_port, SIGNAL(currentIndexChanged(int)), this, SLOT(PortChanged(int)));
 
+    //control the valve 2
+    connect(timer_control_2, SIGNAL(timeout()), this, SLOT(DutyControl_2()));
+    connect(ui->sld_cycle_2, SIGNAL(valueChanged(int)), this, SLOT(sld_cycle_change_2(int)));
+    connect(ui->lbl_cycle_show_2, SIGNAL(editingFinished()), this, SLOT(edit_cycle_change_2()));
+    connect(ui->sld_ratio_2, SIGNAL(valueChanged(int)), this, SLOT(sld_ratio_change_2(int)));
+    connect(ui->lbl_ratio_show_2, SIGNAL(editingFinished()), this, SLOT(edit_ratio_change_2()));
+    connect(ui->btn_duty_2, SIGNAL(clicked()), this, SLOT(btn_duty_click_2()));
+    connect(ui->btn_open_2, SIGNAL(clicked()), this, SLOT(btn_open_click_2()));
+    connect(ui->btn_close_2, SIGNAL(clicked()), this, SLOT(btn_close_click_2()));
+
+    //control the sampling
+    connect(ui->btn_temp_start, SIGNAL(clicked()), this, SLOT(btn_start_click()));
+    connect(ui->btn_temp_pause, SIGNAL(clicked()), this, SLOT(btn_pause_click()));
+    connect(ui->btn_temp_end, SIGNAL(clicked()), this, SLOT(btn_end_click()));
+
+    //control the communication
+    connect(ui->cmb_port, SIGNAL(currentIndexChanged(int)), this, SLOT(PortChanged(int)));
     flow_port = new QSerialPort(this);
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
@@ -88,19 +101,40 @@ void Control::Initialize()
 
     ConfigureDevice();
 
-    ui->sld_open->setValue(75);
     QString str = tr("");
-    str.sprintf("%.2f", ui->sld_open->value()/100.0);
-    ui->lbl_open_show->setText(str);
-    old_open = ui->sld_open->value()/100.0;
 
-    ui->sld_ratio->setValue(15);
+    dataout[0] = 0xFF;
+    //initialize the valve 1
+    ui->sld_cycle->setValue(10);
+    str.sprintf("%.1f", ui->sld_cycle->value()/10.0);
+    ui->lbl_cycle_show->setText(str);
+    ui->sld_ratio->setValue(10);
     str.sprintf("%.1f", ui->sld_ratio->value()/10.0);
     ui->lbl_ratio_show->setText(str);
-    old_ratio = ui->sld_ratio->value()/10.0;
-
-    str.sprintf("%.2f", 1.0/(1.0+ui->sld_ratio->value()/10.0));
+    str.sprintf("%.4f", 1.0/(1.0+ui->sld_ratio->value()/10.0));
     ui->lbl_ratio_present->setText(str);
+    old_cycle = ui->sld_cycle->value()/10.0;
+    old_ratio = ui->sld_ratio->value()/10.0;
+    ui->btn_duty->setEnabled(true);
+    ui->btn_open->setEnabled(true);
+    ui->btn_close->setEnabled(true);
+    mode = 1;
+
+    //initialize the valve 2
+    ui->sld_cycle_2->setValue(10);
+    str.sprintf("%.1f", ui->sld_cycle_2->value()/10.0);
+    ui->lbl_cycle_show_2->setText(str);
+    ui->sld_ratio_2->setValue(10);
+    str.sprintf("%.1f", ui->sld_ratio_2->value()/10.0);
+    ui->lbl_ratio_show_2->setText(str);
+    str.sprintf("%.4f", 1.0/(1.0+ui->sld_ratio_2->value()/10.0));
+    ui->lbl_ratio_present_2->setText(str);
+    old_cycle_2 = ui->sld_cycle_2->value()/10.0;
+    old_ratio_2 = ui->sld_ratio_2->value()/10.0;
+    ui->btn_duty_2->setEnabled(true);
+    ui->btn_open_2->setEnabled(true);
+    ui->btn_close_2->setEnabled(true);
+    mode_2 = 1;
 
     graph_t->m_xCordTimeDiv = (ui->sld_x_scale->value()/10.0) * 1000 / 10;
     graph_t->m_yCordRangeMax = 50;
@@ -113,22 +147,19 @@ void Control::Initialize()
     m_yCordRangeMid_2 = ui->sld_y_center_2->value()/1000.0;
     graph_p->Clear();
 
-    ui->btn_duty->setEnabled(true);
-    ui->btn_open->setEnabled(true);
-    ui->btn_close->setEnabled(true);
     ui->btn_temp_start->setEnabled(true);
     ui->btn_temp_pause->setEnabled(false);
     ui->btn_temp_end->setEnabled(false);
 
-    mode = 1;
-
     ui->lbl_do_pic->setAutoFillBackground(true);
+    ui->lbl_do_pic_2->setAutoFillBackground(true);
     QPixmap pixMap_open(":/Resources/open.png");
     QPixmap pixMap_close(":/Resources/close.png");
     QPalette backPalette;
     backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
     ui->lbl_di_pic->setPalette(backPalette);
     ui->lbl_do_pic->setPalette(backPalette);
+    ui->lbl_do_pic_2->setPalette(backPalette);
 
     ui->listWidget->clear();
     QListWidgetItem *item1 = nullptr;
@@ -161,7 +192,12 @@ void Control::Initialize()
     QTextStream textStream(&csvFile);
     if (csvFile.open(QIODevice::Text | QIODevice::Append))
     {
-        textStream<<"Real-Time Sampling Data"<<"\t"<<"V1"<<"\t"<<"T(Celsius)"<<"\t"<<"V2"<<"\t"<<"P(MPa)"<<"\t"<<"Do"<<"\t"<<"Flow(L/min)"<<endl;
+        textStream<<"Real-Time Sampling Data"
+                  <<"\t"<<"V1"<<"\t"<<"T(Celsius)"
+                  <<"\t"<<"V2"<<"\t"<<"P(MPa)"
+                  <<"\t"<<"Do_1"<<"\t"<<"Cycle(s)"<<"\t"<<"Ratio"
+                  <<"\t"<<"Do_2"<<"\t"<<"Cycle(s)"<<"\t"<<"Ratio"
+                  <<"\t"<<"Flow(L/min)"<<endl;
         csvFile.close();
     }
 }
@@ -277,7 +313,7 @@ void Control::TimerTicked()
     //calculate the temperature and pressure frome voltage
     temperature[0] = (scaledData[0]-2.5)*8.0;
     graph_t->Chart(temperature, 1, 1, 10 / 1000.0);
-    pressure[0] = scaledData[5]/5.0*6.0;
+    pressure[0] = scaledData[5]/5.0*6.0-0.064013;
     graph_p->Chart(pressure, 1, 1, 10 / 1000.0);
 
     //Read the flow at present
@@ -291,6 +327,7 @@ void Control::TimerTicked()
             str_f=(read_flow);
             //qDebug()<<str_f;
         }
+        read_flow.clear();
     }
     }/*----------------------------------------------------------------------------------------*/
 
@@ -304,7 +341,6 @@ void Control::TimerTicked()
     QString str = tr("");
     QListWidgetItem *item;
     QString dataStr = tr("0.00");
-
 
     //for(int i = 0; i < 1; i++)
     {
@@ -321,7 +357,7 @@ void Control::TimerTicked()
     //for(int i = 5; i < 6; i++)
     {
         item = ui->listWidget_2->item(0);
-        str.sprintf("%.2f", pressure[0]);
+        str.sprintf("%.3f", pressure[0]);
         dataStr = str;
         if (str.length() > 7)
         {
@@ -365,6 +401,15 @@ void Control::TimerTicked()
     {
         duty_status = counter_open>0?1:2;
     }
+    int duty_status_2;
+    if(mode_2 == 1)
+        duty_status_2 = 1;
+    else if(mode_2 == 3)
+        duty_status_2 = 2;
+    else
+    {
+        duty_status_2 = counter_open_2>0?1:2;
+    }
 
     QString str_v1 = tr("");
     //str_v1.sprintf("%.4f", scaledData[0]);
@@ -378,6 +423,15 @@ void Control::TimerTicked()
     QString str_p;
     str_p.sprintf("%.4f",pressure[0]);
 
+    QString str_cycle;
+    str_cycle.sprintf("%.1f",ui->sld_cycle->value()/10.0);
+    QString str_ratio;
+    str_ratio.sprintf("%.2f", 1.0/(1.0+ui->sld_ratio->value()/10.0));
+    QString str_cycle_2;
+    str_cycle_2.sprintf("%.1f",ui->sld_cycle_2->value()/10.0);
+    QString str_ratio_2;
+    str_ratio_2.sprintf("%.2f", 1.0/(1.0+ui->sld_ratio_2->value()/10.0));
+
     str_f = tr("virtual flow");
 
     QFile csvFile(OutputPath);
@@ -387,7 +441,8 @@ void Control::TimerTicked()
         textStream<<update_time_string
                   <<"\t"<<str_v1<<"\t"<<str_t
                   <<"\t"<<str_v2<<"\t"<<str_p
-                  <<"\t"<<duty_status
+                  <<"\t"<<duty_status<<"\t"<<str_cycle<<"\t"<<str_ratio
+                  <<"\t"<<duty_status_2<<"\t"<<str_cycle_2<<"\t"<<str_ratio_2
                   <<"\t"<<str_f<<endl;
         csvFile.close();
     }
@@ -474,7 +529,10 @@ void Control::sld_y_center_change_2(int value)//for graph_p
 void Control::btn_start_click()
 {
     timer->start(100);
-    timer_control->start(100);
+    timer_control_interval = 10;
+    timer_control->start(timer_control_interval);
+    timer_control_interval_2 = 10;
+    timer_control_2->start(timer_control_interval_2);
     ui->btn_temp_start->setEnabled(false);
     ui->btn_temp_pause->setEnabled(true);
     ui->btn_temp_end->setEnabled(true);
@@ -484,6 +542,7 @@ void Control::btn_pause_click()
 {
     timer->stop();
     timer_control->stop();
+    timer_control_2->stop();
     ui->btn_temp_start->setEnabled(true);
     ui->btn_temp_pause->setEnabled(false);
     ui->btn_temp_end->setEnabled(true);
@@ -493,6 +552,7 @@ void Control::btn_end_click()
 {
     timer->stop();
     timer_control->stop();
+    timer_control_2->stop();
     graph_t->Clear();
     graph_p->Clear();
     ui->btn_temp_start->setEnabled(true);
@@ -503,8 +563,8 @@ void Control::btn_end_click()
 void Control::btn_duty_click()
 {
     mode = 2;
-    counter_open = qRound((ui->sld_open->value()/100.0)*(1000/100.0));
-    counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/1000.0)*(1000/100.0));
+    counter_open = qRound(((ui->sld_cycle->value()/10.0)*1/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
+    counter_close = qRound(((ui->sld_cycle->value()/10.0)*(ui->sld_ratio->value()/10.0)/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
 }
 
 void Control::btn_open_click()
@@ -517,7 +577,6 @@ void Control::btn_close_click()
     mode = 3;
 }
 
-//Control mode
 void Control::DutyControl()
 {
     QPixmap pixMap_open(":/Resources/open.png");
@@ -526,7 +585,8 @@ void Control::DutyControl()
     if(mode == 1)
     {
         quint8 data_tmp[1];
-        data_tmp[0] = 0x01;
+        data_tmp[0] = dataout[0] | 0x01;
+        dataout[0] = dataout[0] | 0x01;
         ErrorCode errorCode = Success;
         errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
         CheckError(errorCode);
@@ -537,7 +597,8 @@ void Control::DutyControl()
     else if (mode == 3)
     {
         quint8 data_tmp[1];
-        data_tmp[0] = 0x00;
+        data_tmp[0] = dataout[0] & 0xFE;
+        dataout[0] = dataout[0] & 0xFE;
         ErrorCode errorCode = Success;
         errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
         CheckError(errorCode);
@@ -550,7 +611,8 @@ void Control::DutyControl()
         if(counter_open>0 && counter_close>1)
         {
             counter_open--;
-            data_tmp[0] = 0x01;
+            data_tmp[0] = dataout[0] | 0x01;
+            dataout[0] = dataout[0] | 0x01;
             ErrorCode errorCode = Success;
             errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
             CheckError(errorCode);
@@ -560,7 +622,8 @@ void Control::DutyControl()
         else if (counter_open == 0 && counter_close>1)
         {
             counter_close--;
-            data_tmp[0] = 0x00;
+            data_tmp[0] = dataout[0] & 0xFE;
+            dataout[0] = dataout[0] & 0xFE;
             ErrorCode errorCode = Success;
             errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
             CheckError(errorCode);
@@ -569,47 +632,130 @@ void Control::DutyControl()
         }
         else if (counter_open == 0 && counter_close == 1)
         {
-            counter_open = qRound((ui->sld_open->value()/100.0)*(1000/100.0));
-            counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/1000.0)*(1000/100.0));
+            counter_open = qRound(((ui->sld_cycle->value()/10.0)*1/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
+            counter_close = qRound(((ui->sld_cycle->value()/10.0)*(ui->sld_ratio->value()/10.0)/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
         }
         else
         {
-            counter_open = qRound((ui->sld_open->value()/100.0)*(1000/100.0));
-            counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/1000.0)*(1000/100.0));
+            counter_open = qRound(((ui->sld_cycle->value()/10.0)*1/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
+            counter_close = qRound(((ui->sld_cycle->value()/10.0)*(ui->sld_ratio->value()/10.0)/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
         }
-        qDebug()<<counter_open<<" and "<<counter_close;
+        update_time = QDateTime::currentDateTime();
+        update_time_string = update_time.toString("yyyy_MM_dd_hh_mm_ss_z");
+        qDebug()<<counter_open<<" and "<<counter_close<<"   Time: "<<update_time_string;
 
     }
 }
 
-void Control::sld_open_change(int value)
+void Control::btn_duty_click_2()
 {
-    QString str = tr("");
-    str.sprintf("%.2f", value/100.0);
-    ui->lbl_open_show->setText(str);
-    old_open = value/100.0;
-    counter_open = qRound((ui->sld_open->value()/100.0)*(1000/100.0));
-    counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/1000.0)*(1000/100.0));
+    mode_2 = 2;
+    counter_open_2 = qRound(((ui->sld_cycle_2->value()/10.0)*1/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+    counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
 }
 
-void Control::edit_open_change()
+void Control::btn_open_click_2()
 {
-    double new_open = ui->lbl_open_show->text().toDouble();
-    //qDebug()<<new_open;
-    QString str = tr("");
-    if(new_open<0.1 || new_open>2)
+    mode_2 = 1;
+}
+
+void Control::btn_close_click_2()
+{
+    mode_2 = 3;
+}
+
+void Control::DutyControl_2()
+{
+    QPixmap pixMap_open(":/Resources/open.png");
+    QPixmap pixMap_close(":/Resources/close.png");
+    QPalette backPalette;
+    if(mode_2 == 1)
     {
-        new_open = old_open;
+        quint8 data_tmp[1];
+        data_tmp[0] = dataout[0] | 0x10;
+        dataout[0] = dataout[0] | 0x10;
+        ErrorCode errorCode = Success;
+        errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
+        CheckError(errorCode);
+        backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+        ui->lbl_do_pic_2->setPalette(backPalette);
+
+    }
+    else if (mode_2 == 3)
+    {
+        quint8 data_tmp[1];
+        data_tmp[0] = dataout[0] & 0xEF;
+        dataout[0] = dataout[0] & 0xEF;
+        ErrorCode errorCode = Success;
+        errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
+        CheckError(errorCode);
+        backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
+        ui->lbl_do_pic_2->setPalette(backPalette);
     }
     else
     {
-        old_open = new_open;
+        quint8 data_tmp[1];
+        if(counter_open_2>0 && counter_close_2>1)
+        {
+            counter_open_2--;
+            data_tmp[0] = dataout[0] | 0x10;
+            dataout[0] = dataout[0] | 0x10;
+            ErrorCode errorCode = Success;
+            errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
+            CheckError(errorCode);
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+            ui->lbl_do_pic_2->setPalette(backPalette);
+        }
+        else if (counter_open_2 == 0 && counter_close_2>1)
+        {
+            counter_close_2--;
+            data_tmp[0] = dataout[0] & 0xEF;
+            dataout[0] = dataout[0] & 0xEF;
+            ErrorCode errorCode = Success;
+            errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
+            CheckError(errorCode);
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
+            ui->lbl_do_pic_2->setPalette(backPalette);
+        }
+        else if (counter_open_2 == 0 && counter_close_2 == 1)
+        {
+            counter_open_2 = qRound(((ui->sld_cycle_2->value()/10.0)*1/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+            counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+        }
+        else
+        {
+            counter_open_2 = qRound(((ui->sld_cycle_2->value()/10.0)*1/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+            counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+        }
     }
-    str.sprintf("%.2f", new_open);
-    ui->lbl_open_show->setText(str);
-    counter_open = qRound((new_open)*(1000/100.0));
-    counter_close = qRound((new_open*old_ratio)*(1000/100.0));
-    ui->sld_open->setValue(new_open*100.0+0.55);
+}
+
+void Control::sld_cycle_change(int value)
+{
+    QString str = tr("");
+    str.sprintf("%.1f", value/10.0);
+    ui->lbl_cycle_show->setText(str);
+    old_cycle = value/10.0;
+    counter_open = qRound(((ui->sld_cycle->value()/10.0)*1/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
+    counter_close = qRound(((ui->sld_cycle->value()/10.0)*(ui->sld_ratio->value()/10.0)/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
+}
+
+void Control::edit_cycle_change()
+{
+    double new_cycle = ui->lbl_cycle_show->text().toDouble();
+    //qDebug()<<new_open;
+    QString str = tr("");
+    if(new_cycle<0.1 || new_cycle>10)
+    {
+        new_cycle = old_cycle;
+    }
+    str.sprintf("%.1f", new_cycle);
+    ui->lbl_cycle_show->setText(str);
+    ui->sld_cycle->setValue(new_cycle*10.0+0.55);
+    qDebug()<<ui->sld_cycle->value();
+    counter_open = qRound(((ui->sld_cycle->value()/10.0)*1/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
+    counter_close = qRound(((ui->sld_cycle->value()/10.0)*(ui->sld_ratio->value()/10.0)/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
+    old_cycle = new_cycle;
     //qDebug()<<new_open;
     //qDebug()<<ui->sld_open->value();
 }
@@ -620,10 +766,10 @@ void Control::sld_ratio_change(int value)
     str.sprintf("%.1f", value/10.0);
     ui->lbl_ratio_show->setText(str);
     old_ratio = value/10.0;
-    str.sprintf("%.2f", 1.0/(1.0+ui->sld_ratio->value()/10.0));
+    str.sprintf("%.4f", 1.0/(1.0+ui->sld_ratio->value()/10.0));
     ui->lbl_ratio_present->setText(str);
-    counter_open = qRound((ui->sld_open->value()/100.0)*(1000/100.0));
-    counter_close = qRound((ui->sld_open->value()*ui->sld_ratio->value()/1000.0)*(1000/100.0));
+    counter_open = qRound(((ui->sld_cycle->value()/10.0)*1/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
+    counter_close = qRound(((ui->sld_cycle->value()/10.0)*(ui->sld_ratio->value()/10.0)/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
 }
 
 void Control::edit_ratio_change()
@@ -631,21 +777,74 @@ void Control::edit_ratio_change()
     double new_ratio = ui->lbl_ratio_show->text().toDouble();
     //qDebug()<<new_open;
     QString str = tr("");
-    if(new_ratio<0 || new_ratio>10)
+    if(new_ratio<0 || new_ratio>100)
     {
-        new_ratio = old_open;
-    }
-    else
-    {
-        old_open = new_ratio;
+        new_ratio = old_ratio;
     }
     str.sprintf("%.1f", new_ratio);
     ui->lbl_ratio_show->setText(str);
     str.sprintf("%.2f", 1.0/(1.0+new_ratio));
-    counter_open = qRound((old_open)*(1000/100.0));
-    counter_close = qRound((old_open*new_ratio)*(1000/100.0));
     ui->sld_ratio->setValue(new_ratio*10.0+0.55);
+    counter_open = qRound(((ui->sld_cycle->value()/10.0)*1/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
+    counter_close = qRound(((ui->sld_cycle->value()/10.0)*(ui->sld_ratio->value()/10.0)/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
+    old_ratio = new_ratio;
     //qDebug()<<new_ratio;
     //qDebug()<<ui->sld_ratio->value();
 }
 
+void Control::sld_cycle_change_2(int value)
+{
+    QString str = tr("");
+    str.sprintf("%.1f", value/10.0);
+    ui->lbl_cycle_show_2->setText(str);
+    old_cycle_2 = value/10.0;
+    counter_open_2 = qRound(((ui->sld_cycle_2->value()/10.0)*1/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+    counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+}
+
+void Control::edit_cycle_change_2()
+{
+    double new_cycle_2 = ui->lbl_cycle_show_2->text().toDouble();
+    //qDebug()<<new_open;
+    QString str = tr("");
+    if(new_cycle_2<0.1 || new_cycle_2>10)
+    {
+        new_cycle_2 = old_cycle_2;
+    }
+    str.sprintf("%.1f", new_cycle_2);
+    ui->lbl_cycle_show_2->setText(str);
+    ui->sld_cycle_2->setValue(new_cycle_2*10.0+0.55);
+    counter_open_2 = qRound(((ui->sld_cycle_2->value()/10.0)*1/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+    counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+    old_cycle_2 = new_cycle_2;
+}
+
+void Control::sld_ratio_change_2(int value)
+{
+    QString str = tr("");
+    str.sprintf("%.1f", value/10.0);
+    ui->lbl_ratio_show_2->setText(str);
+    old_ratio_2 = value/10.0;
+    str.sprintf("%.4f", 1.0/(1.0+ui->sld_ratio_2->value()/10.0));
+    ui->lbl_ratio_present_2->setText(str);
+    counter_open_2 = qRound(((ui->sld_cycle_2->value()/10.0)*1/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+    counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+}
+
+void Control::edit_ratio_change_2()
+{
+    double new_ratio_2 = ui->lbl_ratio_show_2->text().toDouble();
+    //qDebug()<<new_open;
+    QString str = tr("");
+    if(new_ratio_2<0 || new_ratio_2>100)
+    {
+        new_ratio_2 = old_ratio_2;
+    }
+    str.sprintf("%.1f", new_ratio_2);
+    ui->lbl_ratio_show_2->setText(str);
+    str.sprintf("%.2f", 1.0/(1.0+new_ratio_2));
+    ui->sld_ratio_2->setValue(new_ratio_2*10.0+0.55);
+    counter_open_2 = qRound(((ui->sld_cycle_2->value()/10.0)*1/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+    counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+    old_ratio_2 = new_ratio_2;
+}

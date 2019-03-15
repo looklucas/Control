@@ -52,12 +52,23 @@ private:
     InstantDiCtrl *instantDiCtrl;
     quint8 datain[1];
     InstantDoCtrl *instantDoCtrl;
+    quint8 dataout[1];
+
     int mode;
     QTimer *timer_control;
+    int timer_control_interval;//unit: ms
     int counter_open;
     int counter_close;
     double old_ratio;
-    double old_open;
+    double old_cycle;
+
+    int mode_2;
+    QTimer *timer_control_2;
+    int timer_control_interval_2;//unit: ms
+    int counter_open_2;
+    int counter_close_2;
+    double old_ratio_2;
+    double old_cycle_2;
 
     QDateTime update_time;
     QString update_time_string;
@@ -67,22 +78,35 @@ private:
 
 private slots:
     void TimerTicked();
+    //control the valve 1
     void DutyControl();
-    void sld_open_change(int value);
-    void edit_open_change();
+    void sld_cycle_change(int value);
+    void edit_cycle_change();
     void sld_ratio_change(int value);
     void edit_ratio_change();
+    void btn_duty_click();
+    void btn_open_click();
+    void btn_close_click();
+    //control the valve 2
+    void DutyControl_2();
+    void sld_cycle_change_2(int value);
+    void edit_cycle_change_2();
+    void sld_ratio_change_2(int value);
+    void edit_ratio_change_2();
+    void btn_duty_click_2();
+    void btn_open_click_2();
+    void btn_close_click_2();
+    //control the graph
     void sld_x_scale_change(int value);
     void sld_y_scale_change(int value);
     void sld_y_center_change(int value);
     void sld_y_scale_change_2(int value);
     void sld_y_center_change_2(int value);
+    //control the sampling
     void btn_start_click();
     void btn_pause_click();
     void btn_end_click();
-    void btn_duty_click();
-    void btn_open_click();
-    void btn_close_click();
+    //control the communication
     void PortChanged(int value);
 };
 

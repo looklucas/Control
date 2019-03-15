@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_Control_t {
-    QByteArrayData data[21];
-    char stringdata0[312];
+    QByteArrayData data[29];
+    char stringdata0[458];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -35,34 +35,46 @@ QT_MOC_LITERAL(0, 0, 7), // "Control"
 QT_MOC_LITERAL(1, 8, 11), // "TimerTicked"
 QT_MOC_LITERAL(2, 20, 0), // ""
 QT_MOC_LITERAL(3, 21, 11), // "DutyControl"
-QT_MOC_LITERAL(4, 33, 15), // "sld_open_change"
-QT_MOC_LITERAL(5, 49, 5), // "value"
-QT_MOC_LITERAL(6, 55, 16), // "edit_open_change"
-QT_MOC_LITERAL(7, 72, 16), // "sld_ratio_change"
-QT_MOC_LITERAL(8, 89, 17), // "edit_ratio_change"
-QT_MOC_LITERAL(9, 107, 18), // "sld_x_scale_change"
-QT_MOC_LITERAL(10, 126, 18), // "sld_y_scale_change"
-QT_MOC_LITERAL(11, 145, 19), // "sld_y_center_change"
-QT_MOC_LITERAL(12, 165, 20), // "sld_y_scale_change_2"
-QT_MOC_LITERAL(13, 186, 21), // "sld_y_center_change_2"
-QT_MOC_LITERAL(14, 208, 15), // "btn_start_click"
-QT_MOC_LITERAL(15, 224, 15), // "btn_pause_click"
-QT_MOC_LITERAL(16, 240, 13), // "btn_end_click"
-QT_MOC_LITERAL(17, 254, 14), // "btn_duty_click"
-QT_MOC_LITERAL(18, 269, 14), // "btn_open_click"
-QT_MOC_LITERAL(19, 284, 15), // "btn_close_click"
-QT_MOC_LITERAL(20, 300, 11) // "PortChanged"
+QT_MOC_LITERAL(4, 33, 16), // "sld_cycle_change"
+QT_MOC_LITERAL(5, 50, 5), // "value"
+QT_MOC_LITERAL(6, 56, 17), // "edit_cycle_change"
+QT_MOC_LITERAL(7, 74, 16), // "sld_ratio_change"
+QT_MOC_LITERAL(8, 91, 17), // "edit_ratio_change"
+QT_MOC_LITERAL(9, 109, 14), // "btn_duty_click"
+QT_MOC_LITERAL(10, 124, 14), // "btn_open_click"
+QT_MOC_LITERAL(11, 139, 15), // "btn_close_click"
+QT_MOC_LITERAL(12, 155, 13), // "DutyControl_2"
+QT_MOC_LITERAL(13, 169, 18), // "sld_cycle_change_2"
+QT_MOC_LITERAL(14, 188, 19), // "edit_cycle_change_2"
+QT_MOC_LITERAL(15, 208, 18), // "sld_ratio_change_2"
+QT_MOC_LITERAL(16, 227, 19), // "edit_ratio_change_2"
+QT_MOC_LITERAL(17, 247, 16), // "btn_duty_click_2"
+QT_MOC_LITERAL(18, 264, 16), // "btn_open_click_2"
+QT_MOC_LITERAL(19, 281, 17), // "btn_close_click_2"
+QT_MOC_LITERAL(20, 299, 18), // "sld_x_scale_change"
+QT_MOC_LITERAL(21, 318, 18), // "sld_y_scale_change"
+QT_MOC_LITERAL(22, 337, 19), // "sld_y_center_change"
+QT_MOC_LITERAL(23, 357, 20), // "sld_y_scale_change_2"
+QT_MOC_LITERAL(24, 378, 21), // "sld_y_center_change_2"
+QT_MOC_LITERAL(25, 400, 15), // "btn_start_click"
+QT_MOC_LITERAL(26, 416, 15), // "btn_pause_click"
+QT_MOC_LITERAL(27, 432, 13), // "btn_end_click"
+QT_MOC_LITERAL(28, 446, 11) // "PortChanged"
 
     },
     "Control\0TimerTicked\0\0DutyControl\0"
-    "sld_open_change\0value\0edit_open_change\0"
+    "sld_cycle_change\0value\0edit_cycle_change\0"
     "sld_ratio_change\0edit_ratio_change\0"
-    "sld_x_scale_change\0sld_y_scale_change\0"
-    "sld_y_center_change\0sld_y_scale_change_2\0"
-    "sld_y_center_change_2\0btn_start_click\0"
-    "btn_pause_click\0btn_end_click\0"
     "btn_duty_click\0btn_open_click\0"
-    "btn_close_click\0PortChanged"
+    "btn_close_click\0DutyControl_2\0"
+    "sld_cycle_change_2\0edit_cycle_change_2\0"
+    "sld_ratio_change_2\0edit_ratio_change_2\0"
+    "btn_duty_click_2\0btn_open_click_2\0"
+    "btn_close_click_2\0sld_x_scale_change\0"
+    "sld_y_scale_change\0sld_y_center_change\0"
+    "sld_y_scale_change_2\0sld_y_center_change_2\0"
+    "btn_start_click\0btn_pause_click\0"
+    "btn_end_click\0PortChanged"
 };
 #undef QT_MOC_LITERAL
 
@@ -72,7 +84,7 @@ static const uint qt_meta_data_Control[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      18,   14, // methods
+      26,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -80,24 +92,32 @@ static const uint qt_meta_data_Control[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  104,    2, 0x08 /* Private */,
-       3,    0,  105,    2, 0x08 /* Private */,
-       4,    1,  106,    2, 0x08 /* Private */,
-       6,    0,  109,    2, 0x08 /* Private */,
-       7,    1,  110,    2, 0x08 /* Private */,
-       8,    0,  113,    2, 0x08 /* Private */,
-       9,    1,  114,    2, 0x08 /* Private */,
-      10,    1,  117,    2, 0x08 /* Private */,
-      11,    1,  120,    2, 0x08 /* Private */,
-      12,    1,  123,    2, 0x08 /* Private */,
-      13,    1,  126,    2, 0x08 /* Private */,
-      14,    0,  129,    2, 0x08 /* Private */,
-      15,    0,  130,    2, 0x08 /* Private */,
-      16,    0,  131,    2, 0x08 /* Private */,
-      17,    0,  132,    2, 0x08 /* Private */,
-      18,    0,  133,    2, 0x08 /* Private */,
-      19,    0,  134,    2, 0x08 /* Private */,
-      20,    1,  135,    2, 0x08 /* Private */,
+       1,    0,  144,    2, 0x08 /* Private */,
+       3,    0,  145,    2, 0x08 /* Private */,
+       4,    1,  146,    2, 0x08 /* Private */,
+       6,    0,  149,    2, 0x08 /* Private */,
+       7,    1,  150,    2, 0x08 /* Private */,
+       8,    0,  153,    2, 0x08 /* Private */,
+       9,    0,  154,    2, 0x08 /* Private */,
+      10,    0,  155,    2, 0x08 /* Private */,
+      11,    0,  156,    2, 0x08 /* Private */,
+      12,    0,  157,    2, 0x08 /* Private */,
+      13,    1,  158,    2, 0x08 /* Private */,
+      14,    0,  161,    2, 0x08 /* Private */,
+      15,    1,  162,    2, 0x08 /* Private */,
+      16,    0,  165,    2, 0x08 /* Private */,
+      17,    0,  166,    2, 0x08 /* Private */,
+      18,    0,  167,    2, 0x08 /* Private */,
+      19,    0,  168,    2, 0x08 /* Private */,
+      20,    1,  169,    2, 0x08 /* Private */,
+      21,    1,  172,    2, 0x08 /* Private */,
+      22,    1,  175,    2, 0x08 /* Private */,
+      23,    1,  178,    2, 0x08 /* Private */,
+      24,    1,  181,    2, 0x08 /* Private */,
+      25,    0,  184,    2, 0x08 /* Private */,
+      26,    0,  185,    2, 0x08 /* Private */,
+      27,    0,  186,    2, 0x08 /* Private */,
+      28,    1,  187,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -106,14 +126,22 @@ static const uint qt_meta_data_Control[] = {
     QMetaType::Void,
     QMetaType::Void, QMetaType::Int,    5,
     QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void, QMetaType::Int,    5,
-    QMetaType::Void, QMetaType::Int,    5,
-    QMetaType::Void, QMetaType::Int,    5,
-    QMetaType::Void, QMetaType::Int,    5,
+    QMetaType::Void,
     QMetaType::Void, QMetaType::Int,    5,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,    5,
+    QMetaType::Void, QMetaType::Int,    5,
+    QMetaType::Void, QMetaType::Int,    5,
+    QMetaType::Void, QMetaType::Int,    5,
+    QMetaType::Void, QMetaType::Int,    5,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -130,22 +158,30 @@ void Control::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         switch (_id) {
         case 0: _t->TimerTicked(); break;
         case 1: _t->DutyControl(); break;
-        case 2: _t->sld_open_change((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 3: _t->edit_open_change(); break;
+        case 2: _t->sld_cycle_change((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 3: _t->edit_cycle_change(); break;
         case 4: _t->sld_ratio_change((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 5: _t->edit_ratio_change(); break;
-        case 6: _t->sld_x_scale_change((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 7: _t->sld_y_scale_change((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 8: _t->sld_y_center_change((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 9: _t->sld_y_scale_change_2((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 10: _t->sld_y_center_change_2((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 11: _t->btn_start_click(); break;
-        case 12: _t->btn_pause_click(); break;
-        case 13: _t->btn_end_click(); break;
-        case 14: _t->btn_duty_click(); break;
-        case 15: _t->btn_open_click(); break;
-        case 16: _t->btn_close_click(); break;
-        case 17: _t->PortChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 6: _t->btn_duty_click(); break;
+        case 7: _t->btn_open_click(); break;
+        case 8: _t->btn_close_click(); break;
+        case 9: _t->DutyControl_2(); break;
+        case 10: _t->sld_cycle_change_2((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 11: _t->edit_cycle_change_2(); break;
+        case 12: _t->sld_ratio_change_2((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 13: _t->edit_ratio_change_2(); break;
+        case 14: _t->btn_duty_click_2(); break;
+        case 15: _t->btn_open_click_2(); break;
+        case 16: _t->btn_close_click_2(); break;
+        case 17: _t->sld_x_scale_change((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 18: _t->sld_y_scale_change((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 19: _t->sld_y_center_change((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 20: _t->sld_y_scale_change_2((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 21: _t->sld_y_center_change_2((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 22: _t->btn_start_click(); break;
+        case 23: _t->btn_pause_click(); break;
+        case 24: _t->btn_end_click(); break;
+        case 25: _t->PortChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -176,13 +212,13 @@ int Control::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 18)
+        if (_id < 26)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 18;
+        _id -= 26;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 18)
+        if (_id < 26)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 18;
+        _id -= 26;
     }
     return _id;
 }

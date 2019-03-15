@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>980</width>
-    <height>625</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>980</width>
-    <height>625</height>
+    <height>700</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>980</width>
-    <height>625</height>
+    <height>700</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,7 @@
     <property name="geometry">
      <rect>
       <x>470</x>
-      <y>560</y>
+      <y>660</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -74,7 +74,7 @@
      <string>Stop Recording</string>
     </property>
    </widget>
-   <widget class="QSlider" name="sld_open">
+   <widget class="QSlider" name="sld_cycle">
     <property name="geometry">
      <rect>
       <x>250</x>
@@ -84,19 +84,19 @@
      </rect>
     </property>
     <property name="minimum">
-     <number>10</number>
+     <number>1</number>
     </property>
     <property name="maximum">
-     <number>200</number>
+     <number>100</number>
     </property>
     <property name="value">
-     <number>75</number>
+     <number>10</number>
     </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="lbl_open">
+   <widget class="QLabel" name="lbl_cycle">
     <property name="geometry">
      <rect>
       <x>70</x>
@@ -109,7 +109,7 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="text">
-     <string>Time of open（s）</string>
+     <string>Time of Cycle（s）</string>
     </property>
    </widget>
    <widget class="QLabel" name="second">
@@ -138,10 +138,10 @@
      </rect>
     </property>
     <property name="maximum">
-     <number>100</number>
+     <number>1000</number>
     </property>
     <property name="value">
-     <number>15</number>
+     <number>10</number>
     </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
@@ -152,7 +152,7 @@
      <rect>
       <x>660</x>
       <y>440</y>
-      <width>110</width>
+      <width>120</width>
       <height>30</height>
      </rect>
     </property>
@@ -167,7 +167,7 @@
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>550</y>
+      <y>650</y>
       <width>28</width>
       <height>28</height>
      </rect>
@@ -283,8 +283,8 @@
    <widget class="QLabel" name="lbl_ratio_present">
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>500</y>
+      <x>460</x>
+      <y>570</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -301,7 +301,7 @@
      <rect>
       <x>660</x>
       <y>475</y>
-      <width>110</width>
+      <width>120</width>
       <height>30</height>
      </rect>
     </property>
@@ -376,7 +376,7 @@
      <string>Pause Recording</string>
     </property>
    </widget>
-   <widget class="QLabel" name="lbl_ratio">
+   <widget class="QLabel" name="lbl_ratio_1_1">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -408,11 +408,11 @@
      <string>Start Recording</string>
     </property>
    </widget>
-   <widget class="QLabel" name="lbl_ratio_2">
+   <widget class="QLabel" name="lbl_ratio_1_2">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>500</y>
+      <x>280</x>
+      <y>570</y>
       <width>181</width>
       <height>21</height>
      </rect>
@@ -489,7 +489,7 @@
      <rect>
       <x>660</x>
       <y>510</y>
-      <width>110</width>
+      <width>120</width>
       <height>30</height>
      </rect>
     </property>
@@ -522,7 +522,7 @@
    <widget class="QLabel" name="lbl_time_label">
     <property name="geometry">
      <rect>
-      <x>660</x>
+      <x>810</x>
       <y>560</y>
       <width>121</width>
       <height>21</height>
@@ -538,8 +538,8 @@
    <widget class="QLabel" name="lbl_time">
     <property name="geometry">
      <rect>
-      <x>780</x>
-      <y>560</y>
+      <x>810</x>
+      <y>590</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -555,7 +555,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>500</y>
+      <y>570</y>
       <width>75</width>
       <height>25</height>
      </rect>
@@ -580,7 +580,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>495</y>
+      <y>565</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -618,7 +618,7 @@
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>560</y>
+      <y>660</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -634,7 +634,7 @@
     <property name="geometry">
      <rect>
       <x>390</x>
-      <y>550</y>
+      <y>650</y>
       <width>28</width>
       <height>28</height>
      </rect>
@@ -862,7 +862,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>530</y>
+      <y>600</y>
       <width>75</width>
       <height>25</height>
      </rect>
@@ -887,7 +887,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>525</y>
+      <y>595</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -915,10 +915,10 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="text">
-     <string>1.5</string>
+     <string>1.0</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lbl_open_show">
+   <widget class="QLineEdit" name="lbl_cycle_show">
     <property name="geometry">
      <rect>
       <x>570</x>
@@ -931,14 +931,17 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="text">
-     <string>0.75</string>
+     <string>1.0</string>
+    </property>
+    <property name="maxLength">
+     <number>32767</number>
     </property>
    </widget>
    <widget class="QLabel" name="lbl_real_f">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>560</y>
+      <y>630</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -957,7 +960,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>560</y>
+      <y>630</y>
       <width>75</width>
       <height>25</height>
      </rect>
@@ -982,7 +985,7 @@
     <property name="geometry">
      <rect>
       <x>80</x>
-      <y>590</y>
+      <y>660</y>
       <width>51</width>
       <height>31</height>
      </rect>
@@ -1001,7 +1004,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>590</y>
+      <y>660</y>
       <width>75</width>
       <height>25</height>
      </rect>
@@ -1023,6 +1026,245 @@
     </property>
     <property name="maxCount">
      <number>10</number>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lbl_cycle_show_2">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>500</y>
+      <width>50</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>1.0</string>
+    </property>
+    <property name="maxLength">
+     <number>32767</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_ratio_present_2">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>600</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>0.40</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="sld_ratio_2">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>530</y>
+      <width>301</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>1000</number>
+    </property>
+    <property name="value">
+     <number>10</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QSlider" name="sld_cycle_2">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>500</y>
+      <width>301</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="value">
+     <number>10</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_cycle_2">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>500</y>
+      <width>161</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Time of Cycle（s）</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_ratio_2_2">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>600</y>
+      <width>181</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Duty ratio at present：</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lbl_ratio_show_2">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>530</y>
+      <width>50</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>1.0</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_ratio_2_1">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>530</y>
+      <width>241</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Set Duty ratio（close/open）</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="second_2">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>500</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>s</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_do_pic_2">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>650</y>
+      <width>28</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_do_2">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>660</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Digital Output：</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_open_2">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>580</y>
+      <width>120</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Keep Open_2</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_close_2">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>615</y>
+      <width>120</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Keep Close_2</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_duty_2">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>545</y>
+      <width>120</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Control_2</string>
     </property>
    </widget>
   </widget>
