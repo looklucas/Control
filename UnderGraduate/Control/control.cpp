@@ -64,6 +64,8 @@ Control::Control(QWidget *parent) :
 
     //control the communication
     connect(ui->cmb_port, SIGNAL(currentIndexChanged(int)), this, SLOT(PortChanged(int)));
+    connect(ui->btn_9D,SIGNAL(clicked()),this,SLOT(Send_9D()));
+    connect(ui->btn_54,SIGNAL(clicked()),this,SLOT(Send_54()));
     connect(timer_flow, SIGNAL(timeout()), this, SLOT(ReadFlow()));
 }
 
@@ -297,17 +299,29 @@ void Control::PortChanged(int value)
         QMessageBox::about(nullptr, "warning", "测温相关串口没有打开！");
         return;
     }
-    QByteArray command1;
-    command1.resize(2);
-    command1[0] = (char)0x9D;
-    command1[1] = (char)0x54;
-    qDebug()<<"command[0] = "<<command1[0];
-    qDebug()<<"command[1] = "<<command1[1];
-    flow_port->write(command1,2);
-    QByteArray read_flow;
-    read_flow = flow_port->readAll();
     str_f = "waiting...";
 }
+
+void Control::Send_9D()
+{
+    QByteArray command;
+    command.resize(1);
+    command[0] = (char)0x9D;
+    flow_port->write(command,1);
+    qDebug()<<"Send 0x9D";
+    qDebug()<<"receive : "<<flow_port->readAll();
+}
+
+void Control::Send_54()
+{
+    QByteArray command;
+    command.resize(1);
+    command[0] = (char)0x54;
+    flow_port->write(command,1);
+    qDebug()<<"Send 0x54";
+    qDebug()<<"receive : "<<flow_port->readAll();
+}
+
 
 void Control::ReadFlow()
 {

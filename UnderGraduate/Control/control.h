@@ -110,6 +110,8 @@ private slots:
     //control the communication
     void PortChanged(int value);
     void ReadFlow();
+    void Send_9D();
+    void Send_54();
 };
 
 #endif // CONTROL_H

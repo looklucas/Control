@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>980</width>
-    <height>700</height>
+    <width>1000</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>980</width>
-    <height>700</height>
+    <width>1000</width>
+    <height>720</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>980</width>
-    <height>700</height>
+    <width>1000</width>
+    <height>720</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -45,9 +45,9 @@
    <widget class="QLabel" name="lbl_do">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>660</y>
-      <width>121</width>
+      <x>580</x>
+      <y>675</y>
+      <width>141</width>
       <height>21</height>
      </rect>
     </property>
@@ -55,14 +55,14 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="text">
-     <string>Digital Output：</string>
+     <string>Digital Output 1：</string>
     </property>
    </widget>
    <widget class="QPushButton" name="btn_temp_end">
     <property name="geometry">
      <rect>
-      <x>800</x>
-      <y>510</y>
+      <x>660</x>
+      <y>615</y>
       <width>150</width>
       <height>30</height>
      </rect>
@@ -152,7 +152,7 @@
      <rect>
       <x>660</x>
       <y>440</y>
-      <width>120</width>
+      <width>150</width>
       <height>30</height>
      </rect>
     </property>
@@ -160,14 +160,14 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="text">
-     <string>Control</string>
+     <string>Control valve 1</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbl_do_pic">
     <property name="geometry">
      <rect>
-      <x>610</x>
-      <y>650</y>
+      <x>730</x>
+      <y>670</y>
       <width>28</width>
       <height>28</height>
      </rect>
@@ -284,7 +284,7 @@
     <property name="geometry">
      <rect>
       <x>460</x>
-      <y>570</y>
+      <y>560</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -301,7 +301,7 @@
      <rect>
       <x>660</x>
       <y>475</y>
-      <width>120</width>
+      <width>150</width>
       <height>30</height>
      </rect>
     </property>
@@ -309,7 +309,7 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="text">
-     <string>Keep Open</string>
+     <string>Open valve 1</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbl_x_present">
@@ -363,8 +363,8 @@
    <widget class="QPushButton" name="btn_temp_pause">
     <property name="geometry">
      <rect>
-      <x>800</x>
-      <y>475</y>
+      <x>660</x>
+      <y>580</y>
       <width>150</width>
       <height>30</height>
      </rect>
@@ -395,8 +395,8 @@
    <widget class="QPushButton" name="btn_temp_start">
     <property name="geometry">
      <rect>
-      <x>800</x>
-      <y>440</y>
+      <x>660</x>
+      <y>545</y>
       <width>150</width>
       <height>30</height>
      </rect>
@@ -412,7 +412,7 @@
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>570</y>
+      <y>560</y>
       <width>181</width>
       <height>21</height>
      </rect>
@@ -489,7 +489,7 @@
      <rect>
       <x>660</x>
       <y>510</y>
-      <width>120</width>
+      <width>150</width>
       <height>30</height>
      </rect>
     </property>
@@ -497,7 +497,7 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="text">
-     <string>Keep Close</string>
+     <string>Close valve 1</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbl_y_mid">
@@ -522,8 +522,8 @@
    <widget class="QLabel" name="lbl_time_label">
     <property name="geometry">
      <rect>
-      <x>810</x>
-      <y>560</y>
+      <x>830</x>
+      <y>565</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -538,8 +538,8 @@
    <widget class="QLabel" name="lbl_time">
     <property name="geometry">
      <rect>
-      <x>810</x>
-      <y>590</y>
+      <x>830</x>
+      <y>600</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -555,7 +555,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>570</y>
+      <y>565</y>
       <width>75</width>
       <height>25</height>
      </rect>
@@ -579,8 +579,8 @@
    <widget class="QLabel" name="lbl_di">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>660</y>
+      <x>400</x>
+      <y>675</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -595,8 +595,8 @@
    <widget class="QLabel" name="lbl_di_pic">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>650</y>
+      <x>530</x>
+      <y>670</y>
       <width>28</width>
       <height>28</height>
      </rect>
@@ -915,7 +915,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>625</y>
+      <y>630</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -946,7 +946,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>630</y>
+      <y>635</y>
       <width>75</width>
       <height>25</height>
      </rect>
@@ -971,7 +971,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>655</y>
+      <y>665</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -1002,7 +1002,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>660</y>
+      <y>670</y>
       <width>75</width>
       <height>25</height>
      </rect>
@@ -1049,7 +1049,7 @@
     <property name="geometry">
      <rect>
       <x>460</x>
-      <y>600</y>
+      <y>590</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -1122,7 +1122,7 @@
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>600</y>
+      <y>590</y>
       <width>181</width>
       <height>21</height>
      </rect>
@@ -1185,8 +1185,8 @@
    <widget class="QLabel" name="lbl_do_pic_2">
     <property name="geometry">
      <rect>
-      <x>820</x>
-      <y>650</y>
+      <x>930</x>
+      <y>670</y>
       <width>28</width>
       <height>28</height>
      </rect>
@@ -1204,9 +1204,9 @@
    <widget class="QLabel" name="lbl_do_2">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>660</y>
-      <width>121</width>
+      <x>780</x>
+      <y>675</y>
+      <width>141</width>
       <height>21</height>
      </rect>
     </property>
@@ -1214,15 +1214,15 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="text">
-     <string>Digital Output：</string>
+     <string>Digital Output 2：</string>
     </property>
    </widget>
    <widget class="QPushButton" name="btn_open_2">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>580</y>
-      <width>120</width>
+      <x>830</x>
+      <y>475</y>
+      <width>150</width>
       <height>30</height>
      </rect>
     </property>
@@ -1230,15 +1230,15 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="text">
-     <string>Keep Open_2</string>
+     <string>Open valve 2</string>
     </property>
    </widget>
    <widget class="QPushButton" name="btn_close_2">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>615</y>
-      <width>120</width>
+      <x>830</x>
+      <y>510</y>
+      <width>150</width>
       <height>30</height>
      </rect>
     </property>
@@ -1246,15 +1246,15 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="text">
-     <string>Keep Close_2</string>
+     <string>Close valve 2</string>
     </property>
    </widget>
    <widget class="QPushButton" name="btn_duty_2">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>545</y>
-      <width>120</width>
+      <x>830</x>
+      <y>440</y>
+      <width>150</width>
       <height>30</height>
      </rect>
     </property>
@@ -1262,14 +1262,14 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="text">
-     <string>Control_2</string>
+     <string>Control valve 2</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbl_real_t">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>565</y>
+      <y>560</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -1294,6 +1294,40 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_9D">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>640</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 6
+pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Send 0x9D</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_54">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>670</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 6
+pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Send 0x54</string>
     </property>
    </widget>
   </widget>

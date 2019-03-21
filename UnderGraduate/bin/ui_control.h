@@ -94,14 +94,16 @@ public:
     QPushButton *btn_close_2;
     QPushButton *btn_duty_2;
     QLabel *lbl_real_t;
+    QPushButton *btn_9D;
+    QPushButton *btn_54;
 
     void setupUi(QMainWindow *Control)
     {
         if (Control->objectName().isEmpty())
             Control->setObjectName(QStringLiteral("Control"));
-        Control->resize(980, 700);
-        Control->setMinimumSize(QSize(980, 700));
-        Control->setMaximumSize(QSize(980, 700));
+        Control->resize(1000, 720);
+        Control->setMinimumSize(QSize(1000, 720));
+        Control->setMaximumSize(QSize(1000, 720));
         centralWidget = new QWidget(Control);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         lbl_temp = new QLabel(centralWidget);
@@ -110,11 +112,11 @@ public:
         lbl_temp->setStyleSheet(QString::fromUtf8("font: 12pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_do = new QLabel(centralWidget);
         lbl_do->setObjectName(QStringLiteral("lbl_do"));
-        lbl_do->setGeometry(QRect(470, 660, 121, 21));
+        lbl_do->setGeometry(QRect(580, 675, 141, 21));
         lbl_do->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_temp_end = new QPushButton(centralWidget);
         btn_temp_end->setObjectName(QStringLiteral("btn_temp_end"));
-        btn_temp_end->setGeometry(QRect(800, 510, 150, 30));
+        btn_temp_end->setGeometry(QRect(660, 615, 150, 30));
         btn_temp_end->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         sld_cycle = new QSlider(centralWidget);
         sld_cycle->setObjectName(QStringLiteral("sld_cycle"));
@@ -139,11 +141,11 @@ public:
         sld_ratio->setOrientation(Qt::Horizontal);
         btn_duty = new QPushButton(centralWidget);
         btn_duty->setObjectName(QStringLiteral("btn_duty"));
-        btn_duty->setGeometry(QRect(660, 440, 120, 30));
+        btn_duty->setGeometry(QRect(660, 440, 150, 30));
         btn_duty->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_do_pic = new QLabel(centralWidget);
         lbl_do_pic->setObjectName(QStringLiteral("lbl_do_pic"));
-        lbl_do_pic->setGeometry(QRect(610, 650, 28, 28));
+        lbl_do_pic->setGeometry(QRect(730, 670, 28, 28));
         lbl_do_pic->setAutoFillBackground(true);
         lbl_do_pic->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_scale = new QLabel(centralWidget);
@@ -177,11 +179,11 @@ public:
         graphFrame->setFrameShadow(QFrame::Raised);
         lbl_ratio_present = new QLabel(centralWidget);
         lbl_ratio_present->setObjectName(QStringLiteral("lbl_ratio_present"));
-        lbl_ratio_present->setGeometry(QRect(460, 570, 71, 21));
+        lbl_ratio_present->setGeometry(QRect(460, 560, 71, 21));
         lbl_ratio_present->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_open = new QPushButton(centralWidget);
         btn_open->setObjectName(QStringLiteral("btn_open"));
-        btn_open->setGeometry(QRect(660, 475, 120, 30));
+        btn_open->setGeometry(QRect(660, 475, 150, 30));
         btn_open->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_x_present = new QLabel(centralWidget);
         lbl_x_present->setObjectName(QStringLiteral("lbl_x_present"));
@@ -197,7 +199,7 @@ public:
         lbl_center_show->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_temp_pause = new QPushButton(centralWidget);
         btn_temp_pause->setObjectName(QStringLiteral("btn_temp_pause"));
-        btn_temp_pause->setGeometry(QRect(800, 475, 150, 30));
+        btn_temp_pause->setGeometry(QRect(660, 580, 150, 30));
         btn_temp_pause->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_ratio_1_1 = new QLabel(centralWidget);
         lbl_ratio_1_1->setObjectName(QStringLiteral("lbl_ratio_1_1"));
@@ -205,11 +207,11 @@ public:
         lbl_ratio_1_1->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_temp_start = new QPushButton(centralWidget);
         btn_temp_start->setObjectName(QStringLiteral("btn_temp_start"));
-        btn_temp_start->setGeometry(QRect(800, 440, 150, 30));
+        btn_temp_start->setGeometry(QRect(660, 545, 150, 30));
         btn_temp_start->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_ratio_1_2 = new QLabel(centralWidget);
         lbl_ratio_1_2->setObjectName(QStringLiteral("lbl_ratio_1_2"));
-        lbl_ratio_1_2->setGeometry(QRect(280, 570, 181, 21));
+        lbl_ratio_1_2->setGeometry(QRect(280, 560, 181, 21));
         lbl_ratio_1_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         sld_y_scale = new QSlider(centralWidget);
         sld_y_scale->setObjectName(QStringLiteral("sld_y_scale"));
@@ -230,7 +232,7 @@ public:
         lbl_y_min->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_close = new QPushButton(centralWidget);
         btn_close->setObjectName(QStringLiteral("btn_close"));
-        btn_close->setGeometry(QRect(660, 510, 120, 30));
+        btn_close->setGeometry(QRect(660, 510, 150, 30));
         btn_close->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_y_mid = new QLabel(centralWidget);
         lbl_y_mid->setObjectName(QStringLiteral("lbl_y_mid"));
@@ -239,15 +241,15 @@ public:
         lbl_y_mid->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_time_label = new QLabel(centralWidget);
         lbl_time_label->setObjectName(QStringLiteral("lbl_time_label"));
-        lbl_time_label->setGeometry(QRect(810, 560, 121, 21));
+        lbl_time_label->setGeometry(QRect(830, 565, 121, 21));
         lbl_time_label->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_time = new QLabel(centralWidget);
         lbl_time->setObjectName(QStringLiteral("lbl_time"));
-        lbl_time->setGeometry(QRect(810, 590, 121, 21));
+        lbl_time->setGeometry(QRect(830, 600, 121, 21));
         lbl_time->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         listWidget = new QListWidget(centralWidget);
         listWidget->setObjectName(QStringLiteral("listWidget"));
-        listWidget->setGeometry(QRect(150, 570, 75, 25));
+        listWidget->setGeometry(QRect(150, 565, 75, 25));
         listWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         listWidget->setSelectionMode(QAbstractItemView::NoSelection);
@@ -255,11 +257,11 @@ public:
         listWidget->setProperty("isWrapping", QVariant(true));
         lbl_di = new QLabel(centralWidget);
         lbl_di->setObjectName(QStringLiteral("lbl_di"));
-        lbl_di->setGeometry(QRect(280, 660, 111, 21));
+        lbl_di->setGeometry(QRect(400, 675, 111, 21));
         lbl_di->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_di_pic = new QLabel(centralWidget);
         lbl_di_pic->setObjectName(QStringLiteral("lbl_di_pic"));
-        lbl_di_pic->setGeometry(QRect(390, 650, 28, 28));
+        lbl_di_pic->setGeometry(QRect(530, 670, 28, 28));
         lbl_di_pic->setAutoFillBackground(true);
         lbl_di_pic->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_scale_2 = new QLabel(centralWidget);
@@ -346,14 +348,14 @@ public:
         lbl_cycle_show->setMaxLength(32767);
         lbl_real_f = new QLabel(centralWidget);
         lbl_real_f->setObjectName(QStringLiteral("lbl_real_f"));
-        lbl_real_f->setGeometry(QRect(10, 625, 141, 31));
+        lbl_real_f->setGeometry(QRect(10, 630, 141, 31));
         lbl_real_f->setMinimumSize(QSize(141, 31));
         lbl_real_f->setMaximumSize(QSize(141, 31));
         lbl_real_f->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_real_f->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
         listWidget_3 = new QListWidget(centralWidget);
         listWidget_3->setObjectName(QStringLiteral("listWidget_3"));
-        listWidget_3->setGeometry(QRect(150, 630, 75, 25));
+        listWidget_3->setGeometry(QRect(150, 635, 75, 25));
         listWidget_3->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         listWidget_3->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         listWidget_3->setSelectionMode(QAbstractItemView::NoSelection);
@@ -361,14 +363,14 @@ public:
         listWidget_3->setProperty("isWrapping", QVariant(true));
         lbl_port = new QLabel(centralWidget);
         lbl_port->setObjectName(QStringLiteral("lbl_port"));
-        lbl_port->setGeometry(QRect(10, 655, 141, 31));
+        lbl_port->setGeometry(QRect(10, 665, 141, 31));
         lbl_port->setMinimumSize(QSize(141, 31));
         lbl_port->setMaximumSize(QSize(141, 31));
         lbl_port->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_port->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
         cmb_port = new QComboBox(centralWidget);
         cmb_port->setObjectName(QStringLiteral("cmb_port"));
-        cmb_port->setGeometry(QRect(150, 660, 75, 25));
+        cmb_port->setGeometry(QRect(150, 670, 75, 25));
         QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -384,7 +386,7 @@ public:
         lbl_cycle_show_2->setMaxLength(32767);
         lbl_ratio_present_2 = new QLabel(centralWidget);
         lbl_ratio_present_2->setObjectName(QStringLiteral("lbl_ratio_present_2"));
-        lbl_ratio_present_2->setGeometry(QRect(460, 600, 71, 21));
+        lbl_ratio_present_2->setGeometry(QRect(460, 590, 71, 21));
         lbl_ratio_present_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         sld_ratio_2 = new QSlider(centralWidget);
         sld_ratio_2->setObjectName(QStringLiteral("sld_ratio_2"));
@@ -405,7 +407,7 @@ public:
         lbl_cycle_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_ratio_2_2 = new QLabel(centralWidget);
         lbl_ratio_2_2->setObjectName(QStringLiteral("lbl_ratio_2_2"));
-        lbl_ratio_2_2->setGeometry(QRect(280, 600, 181, 21));
+        lbl_ratio_2_2->setGeometry(QRect(280, 590, 181, 21));
         lbl_ratio_2_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_ratio_show_2 = new QLineEdit(centralWidget);
         lbl_ratio_show_2->setObjectName(QStringLiteral("lbl_ratio_show_2"));
@@ -421,32 +423,42 @@ public:
         second_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_do_pic_2 = new QLabel(centralWidget);
         lbl_do_pic_2->setObjectName(QStringLiteral("lbl_do_pic_2"));
-        lbl_do_pic_2->setGeometry(QRect(820, 650, 28, 28));
+        lbl_do_pic_2->setGeometry(QRect(930, 670, 28, 28));
         lbl_do_pic_2->setAutoFillBackground(true);
         lbl_do_pic_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_do_2 = new QLabel(centralWidget);
         lbl_do_2->setObjectName(QStringLiteral("lbl_do_2"));
-        lbl_do_2->setGeometry(QRect(680, 660, 121, 21));
+        lbl_do_2->setGeometry(QRect(780, 675, 141, 21));
         lbl_do_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_open_2 = new QPushButton(centralWidget);
         btn_open_2->setObjectName(QStringLiteral("btn_open_2"));
-        btn_open_2->setGeometry(QRect(660, 580, 120, 30));
+        btn_open_2->setGeometry(QRect(830, 475, 150, 30));
         btn_open_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_close_2 = new QPushButton(centralWidget);
         btn_close_2->setObjectName(QStringLiteral("btn_close_2"));
-        btn_close_2->setGeometry(QRect(660, 615, 120, 30));
+        btn_close_2->setGeometry(QRect(830, 510, 150, 30));
         btn_close_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_duty_2 = new QPushButton(centralWidget);
         btn_duty_2->setObjectName(QStringLiteral("btn_duty_2"));
-        btn_duty_2->setGeometry(QRect(660, 545, 120, 30));
+        btn_duty_2->setGeometry(QRect(830, 440, 150, 30));
         btn_duty_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_real_t = new QLabel(centralWidget);
         lbl_real_t->setObjectName(QStringLiteral("lbl_real_t"));
-        lbl_real_t->setGeometry(QRect(10, 565, 141, 31));
+        lbl_real_t->setGeometry(QRect(10, 560, 141, 31));
         lbl_real_t->setMinimumSize(QSize(141, 31));
         lbl_real_t->setMaximumSize(QSize(141, 31));
         lbl_real_t->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_real_t->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+        btn_9D = new QPushButton(centralWidget);
+        btn_9D->setObjectName(QStringLiteral("btn_9D"));
+        btn_9D->setGeometry(QRect(270, 640, 100, 30));
+        btn_9D->setStyleSheet(QString::fromUtf8("font: 6\n"
+"pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
+        btn_54 = new QPushButton(centralWidget);
+        btn_54->setObjectName(QStringLiteral("btn_54"));
+        btn_54->setGeometry(QRect(270, 670, 100, 30));
+        btn_54->setStyleSheet(QString::fromUtf8("font: 6\n"
+"pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         Control->setCentralWidget(centralWidget);
 
         retranslateUi(Control);
@@ -458,16 +470,16 @@ public:
     {
         Control->setWindowTitle(QApplication::translate("Control", "Control", nullptr));
         lbl_temp->setText(QApplication::translate("Control", "Temperature\357\274\210\342\204\203\357\274\211", nullptr));
-        lbl_do->setText(QApplication::translate("Control", "Digital Output\357\274\232", nullptr));
+        lbl_do->setText(QApplication::translate("Control", "Digital Output 1\357\274\232", nullptr));
         btn_temp_end->setText(QApplication::translate("Control", "Stop Recording", nullptr));
         lbl_cycle->setText(QApplication::translate("Control", "Time of Cycle\357\274\210s\357\274\211", nullptr));
         second->setText(QApplication::translate("Control", "s", nullptr));
-        btn_duty->setText(QApplication::translate("Control", "Control", nullptr));
+        btn_duty->setText(QApplication::translate("Control", "Control valve 1", nullptr));
         lbl_do_pic->setText(QString());
         lbl_scale->setText(QApplication::translate("Control", "Temperature Range\357\274\232", nullptr));
         lbl_y_max->setText(QApplication::translate("Control", "50.0\342\204\203", nullptr));
         lbl_ratio_present->setText(QApplication::translate("Control", "0.40", nullptr));
-        btn_open->setText(QApplication::translate("Control", "Keep Open", nullptr));
+        btn_open->setText(QApplication::translate("Control", "Open valve 1", nullptr));
         lbl_x_present->setText(QApplication::translate("Control", "10s/\346\240\274", nullptr));
         lbl_center->setText(QApplication::translate("Control", "Temperature Center\357\274\232", nullptr));
         lbl_center_show->setText(QApplication::translate("Control", "0.0\342\204\203", nullptr));
@@ -477,7 +489,7 @@ public:
         lbl_ratio_1_2->setText(QApplication::translate("Control", "Duty ratio at present\357\274\232", nullptr));
         lbl_scale_show->setText(QApplication::translate("Control", "100.0\342\204\203", nullptr));
         lbl_y_min->setText(QApplication::translate("Control", "-50.0\342\204\203", nullptr));
-        btn_close->setText(QApplication::translate("Control", "Keep Close", nullptr));
+        btn_close->setText(QApplication::translate("Control", "Close valve 1", nullptr));
         lbl_y_mid->setText(QApplication::translate("Control", "0.0\342\204\203", nullptr));
         lbl_time_label->setText(QApplication::translate("Control", "Current Time\357\274\232", nullptr));
         lbl_time->setText(QString());
@@ -504,11 +516,13 @@ public:
         lbl_ratio_2_1->setText(QApplication::translate("Control", "Set Duty ratio\357\274\210close/open\357\274\211", nullptr));
         second_2->setText(QApplication::translate("Control", "s", nullptr));
         lbl_do_pic_2->setText(QString());
-        lbl_do_2->setText(QApplication::translate("Control", "Digital Output\357\274\232", nullptr));
-        btn_open_2->setText(QApplication::translate("Control", "Keep Open_2", nullptr));
-        btn_close_2->setText(QApplication::translate("Control", "Keep Close_2", nullptr));
-        btn_duty_2->setText(QApplication::translate("Control", "Control_2", nullptr));
+        lbl_do_2->setText(QApplication::translate("Control", "Digital Output 2\357\274\232", nullptr));
+        btn_open_2->setText(QApplication::translate("Control", "Open valve 2", nullptr));
+        btn_close_2->setText(QApplication::translate("Control", "Close valve 2", nullptr));
+        btn_duty_2->setText(QApplication::translate("Control", "Control valve 2", nullptr));
         lbl_real_t->setText(QApplication::translate("Control", "Temperature(\342\204\203)", nullptr));
+        btn_9D->setText(QApplication::translate("Control", "Send 0x9D", nullptr));
+        btn_54->setText(QApplication::translate("Control", "Send 0x54", nullptr));
     } // retranslateUi
 
 };
