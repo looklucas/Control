@@ -58,8 +58,6 @@ public:
     QLabel *lbl_time_label;
     QLabel *lbl_time;
     QListWidget *listWidget;
-    QLabel *lbl_real_t;
-    QLabel *lbl_click_time;
     QLabel *lbl_di;
     QLabel *lbl_di_pic;
     QLabel *lbl_scale_2;
@@ -95,6 +93,7 @@ public:
     QPushButton *btn_open_2;
     QPushButton *btn_close_2;
     QPushButton *btn_duty_2;
+    QLabel *lbl_real_t;
 
     void setupUi(QMainWindow *Control)
     {
@@ -254,16 +253,6 @@ public:
         listWidget->setSelectionMode(QAbstractItemView::NoSelection);
         listWidget->setFlow(QListView::LeftToRight);
         listWidget->setProperty("isWrapping", QVariant(true));
-        lbl_real_t = new QLabel(centralWidget);
-        lbl_real_t->setObjectName(QStringLiteral("lbl_real_t"));
-        lbl_real_t->setGeometry(QRect(10, 565, 141, 31));
-        lbl_real_t->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
-        lbl_real_t->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
-        lbl_click_time = new QLabel(centralWidget);
-        lbl_click_time->setObjectName(QStringLiteral("lbl_click_time"));
-        lbl_click_time->setGeometry(QRect(310, 550, 51, 31));
-        lbl_click_time->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
-        lbl_click_time->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
         lbl_di = new QLabel(centralWidget);
         lbl_di->setObjectName(QStringLiteral("lbl_di"));
         lbl_di->setGeometry(QRect(280, 660, 111, 21));
@@ -342,6 +331,8 @@ public:
         lbl_real_p = new QLabel(centralWidget);
         lbl_real_p->setObjectName(QStringLiteral("lbl_real_p"));
         lbl_real_p->setGeometry(QRect(10, 595, 141, 31));
+        lbl_real_p->setMinimumSize(QSize(141, 31));
+        lbl_real_p->setMaximumSize(QSize(141, 31));
         lbl_real_p->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_real_p->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
         lbl_ratio_show = new QLineEdit(centralWidget);
@@ -355,7 +346,9 @@ public:
         lbl_cycle_show->setMaxLength(32767);
         lbl_real_f = new QLabel(centralWidget);
         lbl_real_f->setObjectName(QStringLiteral("lbl_real_f"));
-        lbl_real_f->setGeometry(QRect(10, 630, 141, 31));
+        lbl_real_f->setGeometry(QRect(10, 625, 141, 31));
+        lbl_real_f->setMinimumSize(QSize(141, 31));
+        lbl_real_f->setMaximumSize(QSize(141, 31));
         lbl_real_f->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_real_f->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
         listWidget_3 = new QListWidget(centralWidget);
@@ -368,7 +361,9 @@ public:
         listWidget_3->setProperty("isWrapping", QVariant(true));
         lbl_port = new QLabel(centralWidget);
         lbl_port->setObjectName(QStringLiteral("lbl_port"));
-        lbl_port->setGeometry(QRect(80, 660, 51, 31));
+        lbl_port->setGeometry(QRect(10, 655, 141, 31));
+        lbl_port->setMinimumSize(QSize(141, 31));
+        lbl_port->setMaximumSize(QSize(141, 31));
         lbl_port->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_port->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
         cmb_port = new QComboBox(centralWidget);
@@ -445,6 +440,13 @@ public:
         btn_duty_2->setObjectName(QStringLiteral("btn_duty_2"));
         btn_duty_2->setGeometry(QRect(660, 545, 120, 30));
         btn_duty_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
+        lbl_real_t = new QLabel(centralWidget);
+        lbl_real_t->setObjectName(QStringLiteral("lbl_real_t"));
+        lbl_real_t->setGeometry(QRect(10, 565, 141, 31));
+        lbl_real_t->setMinimumSize(QSize(141, 31));
+        lbl_real_t->setMaximumSize(QSize(141, 31));
+        lbl_real_t->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
+        lbl_real_t->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
         Control->setCentralWidget(centralWidget);
 
         retranslateUi(Control);
@@ -479,8 +481,6 @@ public:
         lbl_y_mid->setText(QApplication::translate("Control", "0.0\342\204\203", nullptr));
         lbl_time_label->setText(QApplication::translate("Control", "Current Time\357\274\232", nullptr));
         lbl_time->setText(QString());
-        lbl_real_t->setText(QApplication::translate("Control", "Temperature(\342\204\203)", nullptr));
-        lbl_click_time->setText(QString());
         lbl_di->setText(QApplication::translate("Control", "Digital Input\357\274\232", nullptr));
         lbl_di_pic->setText(QString());
         lbl_scale_2->setText(QApplication::translate("Control", "Pressure Range\357\274\232", nullptr));
@@ -495,7 +495,7 @@ public:
         lbl_ratio_show->setText(QApplication::translate("Control", "1.0", nullptr));
         lbl_cycle_show->setText(QApplication::translate("Control", "1.0", nullptr));
         lbl_real_f->setText(QApplication::translate("Control", "Flow(L/min)", nullptr));
-        lbl_port->setText(QApplication::translate("Control", "Port\357\274\232", nullptr));
+        lbl_port->setText(QApplication::translate("Control", "Port for Flow", nullptr));
         lbl_cycle_show_2->setText(QApplication::translate("Control", "1.0", nullptr));
         lbl_ratio_present_2->setText(QApplication::translate("Control", "0.40", nullptr));
         lbl_cycle_2->setText(QApplication::translate("Control", "Time of Cycle\357\274\210s\357\274\211", nullptr));
@@ -508,6 +508,7 @@ public:
         btn_open_2->setText(QApplication::translate("Control", "Keep Open_2", nullptr));
         btn_close_2->setText(QApplication::translate("Control", "Keep Close_2", nullptr));
         btn_duty_2->setText(QApplication::translate("Control", "Control_2", nullptr));
+        lbl_real_t->setText(QApplication::translate("Control", "Temperature(\342\204\203)", nullptr));
     } // retranslateUi
 
 };

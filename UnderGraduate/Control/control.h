@@ -74,7 +74,8 @@ private:
     QString update_time_string;
 
     QSerialPort *flow_port;
-
+    QTimer *timer_flow;
+    QString str_f;
 
 private slots:
     void TimerTicked();
@@ -108,6 +109,7 @@ private slots:
     void btn_end_click();
     //control the communication
     void PortChanged(int value);
+    void ReadFlow();
 };
 
 #endif // CONTROL_H

@@ -23,10 +23,11 @@ Control::Control(QWidget *parent) :
         scaledData[i] = 0;
     }
     
-
+    //create timers
     timer = new QTimer(this);
     timer_control = new QTimer(this);
     timer_control_2 = new QTimer(this);
+    timer_flow = new QTimer(this);
 
     //control the graph
     connect(timer, SIGNAL(timeout()), this, SLOT(TimerTicked()));
@@ -63,14 +64,7 @@ Control::Control(QWidget *parent) :
 
     //control the communication
     connect(ui->cmb_port, SIGNAL(currentIndexChanged(int)), this, SLOT(PortChanged(int)));
-    flow_port = new QSerialPort(this);
-    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
-    {
-        qDebug() << "Name        : " << info.portName();
-        qDebug() << "Description : " << info.description();
-        qDebug() << "Manufacturer: " << info.manufacturer();
-        ui->cmb_port->addItem(info.portName());
-    }
+    connect(timer_flow, SIGNAL(timeout()), this, SLOT(ReadFlow()));
 }
 
 Control::~Control()
@@ -90,8 +84,10 @@ Control::~Control()
     }
     if(flow_port->isOpen())
     {
+        flow_port->clear();
         flow_port->close();
-        //qDebug()<<"flow_port has been closed !";
+        flow_port->deleteLater();
+        qDebug()<<"flow_port has been closed !";
     }
 }
 
@@ -104,6 +100,7 @@ void Control::Initialize()
     QString str = tr("");
 
     dataout[0] = 0xFF;
+
     //initialize the valve 1
     ui->sld_cycle->setValue(10);
     str.sprintf("%.1f", ui->sld_cycle->value()/10.0);
@@ -136,6 +133,7 @@ void Control::Initialize()
     ui->btn_close_2->setEnabled(true);
     mode_2 = 1;
 
+    //graph set
     graph_t->m_xCordTimeDiv = (ui->sld_x_scale->value()/10.0) * 1000 / 10;
     graph_t->m_yCordRangeMax = 50;
     graph_t->m_yCordRangeMin = -50;
@@ -147,10 +145,12 @@ void Control::Initialize()
     m_yCordRangeMid_2 = ui->sld_y_center_2->value()/1000.0;
     graph_p->Clear();
 
+    //functional button
     ui->btn_temp_start->setEnabled(true);
     ui->btn_temp_pause->setEnabled(false);
     ui->btn_temp_end->setEnabled(false);
 
+    //digital input/output
     ui->lbl_do_pic->setAutoFillBackground(true);
     ui->lbl_do_pic_2->setAutoFillBackground(true);
     QPixmap pixMap_open(":/Resources/open.png");
@@ -161,6 +161,7 @@ void Control::Initialize()
     ui->lbl_do_pic->setPalette(backPalette);
     ui->lbl_do_pic_2->setPalette(backPalette);
 
+    //real-time value show
     ui->listWidget->clear();
     QListWidgetItem *item1 = nullptr;
     for (int i = 0; i < 1; i++)
@@ -174,7 +175,7 @@ void Control::Initialize()
     QListWidgetItem *item2 = nullptr;
     for (int i = 0; i < 1; i++)
     {
-        item2 = new QListWidgetItem(tr("0.00"), ui->listWidget_2);
+        item2 = new QListWidgetItem(tr("0.000"), ui->listWidget_2);
         item2->setBackgroundColor(SimpleGraph::lineColor[1]);
         item2->setSizeHint(QSize(70, 20));
         item2->setTextAlignment(Qt::AlignCenter);
@@ -183,11 +184,23 @@ void Control::Initialize()
     QListWidgetItem *item3 = nullptr;
     for (int i = 0; i < 1; i++)
     {
-        item3 = new QListWidgetItem(tr("0.00"), ui->listWidget_3);
+        item3 = new QListWidgetItem(tr("0.000"), ui->listWidget_3);
         item3->setBackgroundColor(SimpleGraph::lineColor[2]);
         item3->setSizeHint(QSize(70, 20));
         item3->setTextAlignment(Qt::AlignCenter);
     }
+
+    flow_port = new QSerialPort(this);
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
+        qDebug() << "Name        : " << info.portName();
+        qDebug() << "Description : " << info.description();
+        qDebug() << "Manufacturer: " << info.manufacturer();
+        ui->cmb_port->addItem(info.portName());
+    }
+    flow_port->setPortName(ui->cmb_port->currentText());
+
+    //create txt file to save data
     QFile csvFile(OutputPath);
     QTextStream textStream(&csvFile);
     if (csvFile.open(QIODevice::Text | QIODevice::Append))
@@ -257,34 +270,93 @@ void Control::CheckError(ErrorCode errorCode)
 
 void Control::PortChanged(int value)
 {
-    flow_port->setPortName(ui->cmb_port->currentText());
+    qDebug()<<"port changed";
 
+    if(flow_port->isOpen())
+    {
+        flow_port->close();
+    }
+
+    flow_port->setPortName(ui->cmb_port->currentText());
     //open port
     if(flow_port->open(QIODevice::ReadWrite))
     {
-        //设置波特率
-        flow_port->setBaudRate(9600);
-        //设置数据位数
+        //set baudrate
+        flow_port->setBaudRate(57600);
+        //set data bits
         flow_port->setDataBits(QSerialPort::Data8);
-        //设置奇偶校验
+        //set parity
         flow_port->setParity(QSerialPort::NoParity);
-        //设置停止位
+        //set stop bits
         flow_port->setStopBits(QSerialPort::OneStop);
-        //设置流控制
+        //set flow control
         flow_port->setFlowControl(QSerialPort::NoFlowControl);
     }
     else
     {
-        QMessageBox::about(nullptr, "提示", "测温相关串口没有打开！");
+        QMessageBox::about(nullptr, "warning", "测温相关串口没有打开！");
         return;
     }
-    qDebug()<<"current port name: "<<flow_port->portName();
-    qDebug()<<"info:              "<<flow_port->baudRate();
+    QByteArray command1;
+    command1.resize(2);
+    command1[0] = (char)0x9D;
+    command1[1] = (char)0x54;
+    qDebug()<<"command[0] = "<<command1[0];
+    qDebug()<<"command[1] = "<<command1[1];
+    flow_port->write(command1,2);
+    QByteArray read_flow;
+    read_flow = flow_port->readAll();
+    str_f = "waiting...";
+}
+
+void Control::ReadFlow()
+{
+    QByteArray read_flow;
+    if(flow_port->isOpen())
+    {
+        qDebug()<<"flow_port is open ! ";
+        read_flow = flow_port->readAll();
+        if(!read_flow.isEmpty())
+        {
+            str_f=(read_flow);
+            qDebug()<<"str_f = "<<str_f;
+            int strStartIndex = str_f.indexOf('F');
+            //qDebug()<<"start index :" <<strStartIndex;
+            int strEndIndex = str_f.indexOf('A');
+            //qDebug()<<"end index:" <<strEndIndex;
+            str_f = str_f.mid(strStartIndex+3, strEndIndex-strStartIndex-4);
+            double tmp = str_f.toDouble()/1000.0;
+            str_f.sprintf("%.3f",tmp);
+            read_flow.clear();
+        }
+        else
+        {
+            QByteArray command1;
+            command1.resize(2);
+            command1[0] = (char)0x9D;
+            command1[1] = (char)0x54;
+            qDebug()<<"command[0] = "<<command1[0];
+            qDebug()<<"command[1] = "<<command1[1];
+            flow_port->write(command1,2);
+            str_f = "waiting...";
+        }
+    }
+    else
+    {
+        //try to open again
+        QByteArray command1;
+        command1.resize(2);
+        command1[0] = (char)0x9D;
+        command1[1] = (char)0x54;
+        qDebug()<<"command[0] = "<<command1[0];
+        qDebug()<<"command[1] = "<<command1[1];
+        flow_port->write(command1,2);
+        str_f = "waiting...";
+    }
 }
 
 void Control::TimerTicked()
 {
-    QString str_f;
     QPixmap pixMap_open(":/Resources/open.png");
     QPixmap pixMap_close(":/Resources/close.png");
     QPalette backPalette;
@@ -316,19 +388,7 @@ void Control::TimerTicked()
     pressure[0] = scaledData[5]/5.0*6.0-0.064013;
     graph_p->Chart(pressure, 1, 1, 10 / 1000.0);
 
-    //Read the flow at present
-    QByteArray read_flow;
-    if(flow_port->isOpen())
-    {
-        //qDebug()<<"flow_port is open ! ";
-        read_flow = flow_port->readAll();
-        if(!read_flow.isEmpty())
-        {
-            str_f=(read_flow);
-            //qDebug()<<str_f;
-        }
-        read_flow.clear();
-    }
+
     }/*----------------------------------------------------------------------------------------*/
 
     //show the time, temperature, pressure and flow value
@@ -389,7 +449,7 @@ void Control::TimerTicked()
     }
     }/*----------------------------------------------------------------------------------------*/
 
-    //output the time, original voltage, pressure and Do status to txt
+    //output the time, original voltage, pressure and Do status to txt file
     /*----------------------------------------------------------------------------------------*/
     {
     int duty_status;
@@ -431,8 +491,6 @@ void Control::TimerTicked()
     str_cycle_2.sprintf("%.1f",ui->sld_cycle_2->value()/10.0);
     QString str_ratio_2;
     str_ratio_2.sprintf("%.2f", 1.0/(1.0+ui->sld_ratio_2->value()/10.0));
-
-    str_f = tr("virtual flow");
 
     QFile csvFile(OutputPath);
     QTextStream textStream(&csvFile);
@@ -533,6 +591,7 @@ void Control::btn_start_click()
     timer_control->start(timer_control_interval);
     timer_control_interval_2 = 10;
     timer_control_2->start(timer_control_interval_2);
+    timer_flow->start(4000);//every 4s read flow
     ui->btn_temp_start->setEnabled(false);
     ui->btn_temp_pause->setEnabled(true);
     ui->btn_temp_end->setEnabled(true);
@@ -543,6 +602,7 @@ void Control::btn_pause_click()
     timer->stop();
     timer_control->stop();
     timer_control_2->stop();
+    timer_flow->stop();
     ui->btn_temp_start->setEnabled(true);
     ui->btn_temp_pause->setEnabled(false);
     ui->btn_temp_end->setEnabled(true);
@@ -553,6 +613,7 @@ void Control::btn_end_click()
     timer->stop();
     timer_control->stop();
     timer_control_2->stop();
+    timer_flow->stop();
     graph_t->Clear();
     graph_p->Clear();
     ui->btn_temp_start->setEnabled(true);
@@ -666,6 +727,10 @@ void Control::btn_close_click_2()
 
 void Control::DutyControl_2()
 {
+    //mode 1: keep open
+    //mode 2: control
+    //mode 3: keep close
+
     QPixmap pixMap_open(":/Resources/open.png");
     QPixmap pixMap_close(":/Resources/close.png");
     QPalette backPalette;
