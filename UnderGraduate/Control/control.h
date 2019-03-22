@@ -76,6 +76,8 @@ private:
     QSerialPort *flow_port;
     QTimer *timer_flow;
     QString str_f;
+    QByteArray command1;
+    QByteArray command2;
 
 private slots:
     void TimerTicked();
@@ -110,8 +112,6 @@ private slots:
     //control the communication
     void PortChanged(int value);
     void ReadFlow();
-    void Send_9D();
-    void Send_54();
 };
 
 #endif // CONTROL_H

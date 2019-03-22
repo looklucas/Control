@@ -64,8 +64,6 @@ Control::Control(QWidget *parent) :
 
     //control the communication
     connect(ui->cmb_port, SIGNAL(currentIndexChanged(int)), this, SLOT(PortChanged(int)));
-    connect(ui->btn_9D,SIGNAL(clicked()),this,SLOT(Send_9D()));
-    connect(ui->btn_54,SIGNAL(clicked()),this,SLOT(Send_54()));
     connect(timer_flow, SIGNAL(timeout()), this, SLOT(ReadFlow()));
 }
 
@@ -201,6 +199,10 @@ void Control::Initialize()
         ui->cmb_port->addItem(info.portName());
     }
     flow_port->setPortName(ui->cmb_port->currentText());
+    command1.resize(1);
+    command2.resize(1);
+    command1[0] = (char)0x9D;
+    command2[0] = (char)0x54;
 
     //create txt file to save data
     QFile csvFile(OutputPath);
@@ -302,29 +304,10 @@ void Control::PortChanged(int value)
     str_f = "waiting...";
 }
 
-void Control::Send_9D()
-{
-    QByteArray command;
-    command.resize(1);
-    command[0] = (char)0x9D;
-    flow_port->write(command,1);
-    qDebug()<<"Send 0x9D";
-    qDebug()<<"receive : "<<flow_port->readAll();
-}
-
-void Control::Send_54()
-{
-    QByteArray command;
-    command.resize(1);
-    command[0] = (char)0x54;
-    flow_port->write(command,1);
-    qDebug()<<"Send 0x54";
-    qDebug()<<"receive : "<<flow_port->readAll();
-}
-
 void Control::ReadFlow()
 {
     QByteArray read_flow;
+    read_flow.clear();
     if(flow_port->isOpen())
     {
         qDebug()<<"flow_port is open ! ";
@@ -344,27 +327,25 @@ void Control::ReadFlow()
         }
         else
         {
-            QByteArray command1;
-            command1.resize(2);
-            command1[0] = (char)0x9D;
-            command1[1] = (char)0x54;
-            qDebug()<<"command[0] = "<<command1[0];
-            qDebug()<<"command[1] = "<<command1[1];
-            flow_port->write(command1,2);
-            str_f = "waiting...";
+            //try to communicaiton
+            flow_port->write(command1,1);
+            qDebug()<<"Send 0x9D";
+            QTime reach = QTime::currentTime().addMSecs(100);
+            while (QTime::currentTime() < reach)
+            {
+                QCoreApplication::processEvents(QEventLoop::AllEvents);
+            }
+            qDebug()<<"receive : "<<flow_port->readAll();
+
+            flow_port->write(command2,1);
+            qDebug()<<"Send 0x54";
+            reach = QTime::currentTime().addMSecs(100);
+            while (QTime::currentTime() < reach)
+            {
+                QCoreApplication::processEvents(QEventLoop::AllEvents);
+            }
+            qDebug()<<"receive : "<<flow_port->readAll();
         }
-    }
-    else
-    {
-        //try to open again
-        QByteArray command1;
-        command1.resize(2);
-        command1[0] = (char)0x9D;
-        command1[1] = (char)0x54;
-        qDebug()<<"command[0] = "<<command1[0];
-        qDebug()<<"command[1] = "<<command1[1];
-        flow_port->write(command1,2);
-        str_f = "waiting...";
     }
 }
 

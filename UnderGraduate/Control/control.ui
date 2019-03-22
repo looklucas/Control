@@ -45,7 +45,7 @@
    <widget class="QLabel" name="lbl_do">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>280</x>
       <y>675</y>
       <width>141</width>
       <height>21</height>
@@ -166,7 +166,7 @@
    <widget class="QLabel" name="lbl_do_pic">
     <property name="geometry">
      <rect>
-      <x>730</x>
+      <x>430</x>
       <y>670</y>
       <width>28</width>
       <height>28</height>
@@ -579,7 +579,7 @@
    <widget class="QLabel" name="lbl_di">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>830</x>
       <y>675</y>
       <width>111</width>
       <height>21</height>
@@ -595,7 +595,7 @@
    <widget class="QLabel" name="lbl_di_pic">
     <property name="geometry">
      <rect>
-      <x>530</x>
+      <x>960</x>
       <y>670</y>
       <width>28</width>
       <height>28</height>
@@ -1185,7 +1185,7 @@
    <widget class="QLabel" name="lbl_do_pic_2">
     <property name="geometry">
      <rect>
-      <x>930</x>
+      <x>630</x>
       <y>670</y>
       <width>28</width>
       <height>28</height>
@@ -1204,7 +1204,7 @@
    <widget class="QLabel" name="lbl_do_2">
     <property name="geometry">
      <rect>
-      <x>780</x>
+      <x>480</x>
       <y>675</y>
       <width>141</width>
       <height>21</height>
@@ -1294,40 +1294,6 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_9D">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>640</y>
-      <width>100</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 6
-pt &quot;微软雅黑&quot;;</string>
-    </property>
-    <property name="text">
-     <string>Send 0x9D</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_54">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>670</y>
-      <width>100</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 6
-pt &quot;微软雅黑&quot;;</string>
-    </property>
-    <property name="text">
-     <string>Send 0x54</string>
     </property>
    </widget>
   </widget>
