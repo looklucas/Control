@@ -122,7 +122,7 @@ public:
         sld_cycle->setObjectName(QStringLiteral("sld_cycle"));
         sld_cycle->setGeometry(QRect(250, 440, 301, 19));
         sld_cycle->setMinimum(1);
-        sld_cycle->setMaximum(100);
+        sld_cycle->setMaximum(1000);
         sld_cycle->setValue(10);
         sld_cycle->setOrientation(Qt::Horizontal);
         lbl_cycle = new QLabel(centralWidget);

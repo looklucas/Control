@@ -322,7 +322,6 @@ void Control::Send_54()
     qDebug()<<"receive : "<<flow_port->readAll();
 }
 
-
 void Control::ReadFlow()
 {
     QByteArray read_flow;
@@ -824,14 +823,14 @@ void Control::edit_cycle_change()
     double new_cycle = ui->lbl_cycle_show->text().toDouble();
     //qDebug()<<new_open;
     QString str = tr("");
-    if(new_cycle<0.1 || new_cycle>10)
+    if(new_cycle<0.1 || new_cycle>100)
     {
         new_cycle = old_cycle;
     }
     str.sprintf("%.1f", new_cycle);
     ui->lbl_cycle_show->setText(str);
     ui->sld_cycle->setValue(new_cycle*10.0+0.55);
-    qDebug()<<ui->sld_cycle->value();
+    //qDebug()<<ui->sld_cycle->value();
     counter_open = qRound(((ui->sld_cycle->value()/10.0)*1/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
     counter_close = qRound(((ui->sld_cycle->value()/10.0)*(ui->sld_ratio->value()/10.0)/(ui->sld_ratio->value()/10.0+1))*(1000.0/timer_control_interval));
     old_cycle = new_cycle;
