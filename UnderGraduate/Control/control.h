@@ -17,6 +17,7 @@ const QDateTime current_date_time =QDateTime::currentDateTime();
 const QString current_date =current_date_time.toString("yyyy_MM_dd_hh_mm_ss");
 const QString OutputPath = OutputPath1 + current_date + OutputPath2;
 
+
 namespace Ui {
 class Control;
 }
@@ -42,15 +43,13 @@ private:
     ConfigureParameter configure;
     InstantAiCtrl *instantAiCtrl;
     double scaledData[16];
-    double temperature[4];
-    double pressure[2];
+    double temperature[1];// one channel for temperature
+    double pressure[1];// one channel for pressure
     double m_yCordRangeMid;
     double m_yCordRangeMid_2;
     double Time_total;
     QTimer *timer;
 
-    InstantDiCtrl *instantDiCtrl;
-    quint8 datain[1];
     InstantDoCtrl *instantDoCtrl;
     quint8 dataout[1];
 
@@ -69,13 +68,30 @@ private:
     int counter_close_2;
     double old_ratio_2;
     double old_cycle_2;
+    bool auto_activate;//activate the auto control function
+    bool auto_stable;//enable or disable auto control
+    double cmp_t;//the temprature to be compared during auto control
+    int mode_before_auto;//save the mode_2 before auto
+    double temperature_before;//save temperature at (t0-0.1)s
 
+    //current time
     QDateTime update_time;
     QString update_time_string;
 
+    //output file
+    QString str_v1;
+    QString str_t;
+    QString str_v2;
+    QString str_p;
+    QString str_cycle;
+    QString str_ratio;
+    QString str_cycle_2;
+    QString str_ratio_2;
+    QString str_f;
+
+    //RS485 communication
     QSerialPort *flow_port;
     QTimer *timer_flow;
-    QString str_f;
     QByteArray command1;
     QByteArray command2;
 
@@ -99,6 +115,8 @@ private slots:
     void btn_duty_click_2();
     void btn_open_click_2();
     void btn_close_click_2();
+    void btn_auto_click();
+    void Auto_T_Changed(int value);
     //control the graph
     void sld_x_scale_change(int value);
     void sld_y_scale_change(int value);
@@ -110,7 +128,7 @@ private slots:
     void btn_pause_click();
     void btn_end_click();
     //control the communication
-    void PortChanged(int value);
+    void PortChanged();
     void ReadFlow();
 };
 

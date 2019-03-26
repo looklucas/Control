@@ -58,8 +58,6 @@ public:
     QLabel *lbl_time_label;
     QLabel *lbl_time;
     QListWidget *listWidget;
-    QLabel *lbl_di;
-    QLabel *lbl_di_pic;
     QLabel *lbl_scale_2;
     QLabel *lbl_y_max_2;
     QLabel *lbl_temp_2;
@@ -94,6 +92,9 @@ public:
     QPushButton *btn_close_2;
     QPushButton *btn_duty_2;
     QLabel *lbl_real_t;
+    QComboBox *cmb_t;
+    QPushButton *btn_auto;
+    QLabel *lbl_t_select;
 
     void setupUi(QMainWindow *Control)
     {
@@ -114,13 +115,13 @@ public:
         lbl_do->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_temp_end = new QPushButton(centralWidget);
         btn_temp_end->setObjectName(QStringLiteral("btn_temp_end"));
-        btn_temp_end->setGeometry(QRect(660, 615, 150, 30));
+        btn_temp_end->setGeometry(QRect(660, 640, 150, 30));
         btn_temp_end->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         sld_cycle = new QSlider(centralWidget);
         sld_cycle->setObjectName(QStringLiteral("sld_cycle"));
         sld_cycle->setGeometry(QRect(250, 440, 301, 19));
         sld_cycle->setMinimum(1);
-        sld_cycle->setMaximum(1000);
+        sld_cycle->setMaximum(500);
         sld_cycle->setValue(10);
         sld_cycle->setOrientation(Qt::Horizontal);
         lbl_cycle = new QLabel(centralWidget);
@@ -134,7 +135,7 @@ public:
         sld_ratio = new QSlider(centralWidget);
         sld_ratio->setObjectName(QStringLiteral("sld_ratio"));
         sld_ratio->setGeometry(QRect(250, 470, 301, 19));
-        sld_ratio->setMaximum(1000);
+        sld_ratio->setMaximum(200);
         sld_ratio->setValue(10);
         sld_ratio->setOrientation(Qt::Horizontal);
         btn_duty = new QPushButton(centralWidget);
@@ -181,7 +182,7 @@ public:
         lbl_ratio_present->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_open = new QPushButton(centralWidget);
         btn_open->setObjectName(QStringLiteral("btn_open"));
-        btn_open->setGeometry(QRect(660, 475, 150, 30));
+        btn_open->setGeometry(QRect(660, 480, 150, 30));
         btn_open->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_x_present = new QLabel(centralWidget);
         lbl_x_present->setObjectName(QStringLiteral("lbl_x_present"));
@@ -197,7 +198,7 @@ public:
         lbl_center_show->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_temp_pause = new QPushButton(centralWidget);
         btn_temp_pause->setObjectName(QStringLiteral("btn_temp_pause"));
-        btn_temp_pause->setGeometry(QRect(660, 580, 150, 30));
+        btn_temp_pause->setGeometry(QRect(660, 600, 150, 30));
         btn_temp_pause->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_ratio_1_1 = new QLabel(centralWidget);
         lbl_ratio_1_1->setObjectName(QStringLiteral("lbl_ratio_1_1"));
@@ -205,7 +206,7 @@ public:
         lbl_ratio_1_1->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_temp_start = new QPushButton(centralWidget);
         btn_temp_start->setObjectName(QStringLiteral("btn_temp_start"));
-        btn_temp_start->setGeometry(QRect(660, 545, 150, 30));
+        btn_temp_start->setGeometry(QRect(660, 560, 150, 30));
         btn_temp_start->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_ratio_1_2 = new QLabel(centralWidget);
         lbl_ratio_1_2->setObjectName(QStringLiteral("lbl_ratio_1_2"));
@@ -230,7 +231,7 @@ public:
         lbl_y_min->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_close = new QPushButton(centralWidget);
         btn_close->setObjectName(QStringLiteral("btn_close"));
-        btn_close->setGeometry(QRect(660, 510, 150, 30));
+        btn_close->setGeometry(QRect(660, 520, 150, 30));
         btn_close->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_y_mid = new QLabel(centralWidget);
         lbl_y_mid->setObjectName(QStringLiteral("lbl_y_mid"));
@@ -239,11 +240,11 @@ public:
         lbl_y_mid->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_time_label = new QLabel(centralWidget);
         lbl_time_label->setObjectName(QStringLiteral("lbl_time_label"));
-        lbl_time_label->setGeometry(QRect(830, 565, 121, 21));
+        lbl_time_label->setGeometry(QRect(280, 630, 121, 21));
         lbl_time_label->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_time = new QLabel(centralWidget);
         lbl_time->setObjectName(QStringLiteral("lbl_time"));
-        lbl_time->setGeometry(QRect(830, 600, 121, 21));
+        lbl_time->setGeometry(QRect(410, 630, 121, 21));
         lbl_time->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         listWidget = new QListWidget(centralWidget);
         listWidget->setObjectName(QStringLiteral("listWidget"));
@@ -253,15 +254,6 @@ public:
         listWidget->setSelectionMode(QAbstractItemView::NoSelection);
         listWidget->setFlow(QListView::LeftToRight);
         listWidget->setProperty("isWrapping", QVariant(true));
-        lbl_di = new QLabel(centralWidget);
-        lbl_di->setObjectName(QStringLiteral("lbl_di"));
-        lbl_di->setGeometry(QRect(830, 675, 111, 21));
-        lbl_di->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
-        lbl_di_pic = new QLabel(centralWidget);
-        lbl_di_pic->setObjectName(QStringLiteral("lbl_di_pic"));
-        lbl_di_pic->setGeometry(QRect(960, 670, 28, 28));
-        lbl_di_pic->setAutoFillBackground(true);
-        lbl_di_pic->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_scale_2 = new QLabel(centralWidget);
         lbl_scale_2->setObjectName(QStringLiteral("lbl_scale_2"));
         lbl_scale_2->setGeometry(QRect(10, 200, 151, 21));
@@ -389,14 +381,14 @@ public:
         sld_ratio_2 = new QSlider(centralWidget);
         sld_ratio_2->setObjectName(QStringLiteral("sld_ratio_2"));
         sld_ratio_2->setGeometry(QRect(250, 530, 301, 19));
-        sld_ratio_2->setMaximum(1000);
+        sld_ratio_2->setMaximum(200);
         sld_ratio_2->setValue(10);
         sld_ratio_2->setOrientation(Qt::Horizontal);
         sld_cycle_2 = new QSlider(centralWidget);
         sld_cycle_2->setObjectName(QStringLiteral("sld_cycle_2"));
         sld_cycle_2->setGeometry(QRect(250, 500, 301, 19));
         sld_cycle_2->setMinimum(1);
-        sld_cycle_2->setMaximum(100);
+        sld_cycle_2->setMaximum(500);
         sld_cycle_2->setValue(10);
         sld_cycle_2->setOrientation(Qt::Horizontal);
         lbl_cycle_2 = new QLabel(centralWidget);
@@ -430,11 +422,11 @@ public:
         lbl_do_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_open_2 = new QPushButton(centralWidget);
         btn_open_2->setObjectName(QStringLiteral("btn_open_2"));
-        btn_open_2->setGeometry(QRect(830, 475, 150, 30));
+        btn_open_2->setGeometry(QRect(830, 480, 150, 30));
         btn_open_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_close_2 = new QPushButton(centralWidget);
         btn_close_2->setObjectName(QStringLiteral("btn_close_2"));
-        btn_close_2->setGeometry(QRect(830, 510, 150, 30));
+        btn_close_2->setGeometry(QRect(830, 520, 150, 30));
         btn_close_2->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         btn_duty_2 = new QPushButton(centralWidget);
         btn_duty_2->setObjectName(QStringLiteral("btn_duty_2"));
@@ -447,6 +439,32 @@ public:
         lbl_real_t->setMaximumSize(QSize(141, 31));
         lbl_real_t->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         lbl_real_t->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+        cmb_t = new QComboBox(centralWidget);
+        cmb_t->addItem(QString());
+        cmb_t->addItem(QString());
+        cmb_t->addItem(QString());
+        cmb_t->addItem(QString());
+        cmb_t->addItem(QString());
+        cmb_t->addItem(QString());
+        cmb_t->addItem(QString());
+        cmb_t->addItem(QString());
+        cmb_t->addItem(QString());
+        cmb_t->addItem(QString());
+        cmb_t->setObjectName(QStringLiteral("cmb_t"));
+        cmb_t->setGeometry(QRect(830, 640, 75, 30));
+        sizePolicy.setHeightForWidth(cmb_t->sizePolicy().hasHeightForWidth());
+        cmb_t->setSizePolicy(sizePolicy);
+        cmb_t->setMaximumSize(QSize(150, 50));
+        cmb_t->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
+        cmb_t->setMaxCount(10);
+        btn_auto = new QPushButton(centralWidget);
+        btn_auto->setObjectName(QStringLiteral("btn_auto"));
+        btn_auto->setGeometry(QRect(830, 560, 150, 30));
+        btn_auto->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
+        lbl_t_select = new QLabel(centralWidget);
+        lbl_t_select->setObjectName(QStringLiteral("lbl_t_select"));
+        lbl_t_select->setGeometry(QRect(830, 605, 161, 21));
+        lbl_t_select->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         Control->setCentralWidget(centralWidget);
 
         retranslateUi(Control);
@@ -481,8 +499,6 @@ public:
         lbl_y_mid->setText(QApplication::translate("Control", "0.0\342\204\203", nullptr));
         lbl_time_label->setText(QApplication::translate("Control", "Current Time\357\274\232", nullptr));
         lbl_time->setText(QString());
-        lbl_di->setText(QApplication::translate("Control", "Digital Input\357\274\232", nullptr));
-        lbl_di_pic->setText(QString());
         lbl_scale_2->setText(QApplication::translate("Control", "Pressure Range\357\274\232", nullptr));
         lbl_y_max_2->setText(QApplication::translate("Control", "1MPa", nullptr));
         lbl_temp_2->setText(QApplication::translate("Control", "Pressure\357\274\210MPa\357\274\211", nullptr));
@@ -509,6 +525,19 @@ public:
         btn_close_2->setText(QApplication::translate("Control", "Close valve 2", nullptr));
         btn_duty_2->setText(QApplication::translate("Control", "Control valve 2", nullptr));
         lbl_real_t->setText(QApplication::translate("Control", "Temperature(\342\204\203)", nullptr));
+        cmb_t->setItemText(0, QApplication::translate("Control", "0\342\204\203", nullptr));
+        cmb_t->setItemText(1, QApplication::translate("Control", "-20\342\204\203", nullptr));
+        cmb_t->setItemText(2, QApplication::translate("Control", "-40\342\204\203", nullptr));
+        cmb_t->setItemText(3, QApplication::translate("Control", "-60\342\204\203", nullptr));
+        cmb_t->setItemText(4, QApplication::translate("Control", "-80\342\204\203", nullptr));
+        cmb_t->setItemText(5, QApplication::translate("Control", "-100\342\204\203", nullptr));
+        cmb_t->setItemText(6, QApplication::translate("Control", "-120\342\204\203", nullptr));
+        cmb_t->setItemText(7, QApplication::translate("Control", "-140\342\204\203", nullptr));
+        cmb_t->setItemText(8, QApplication::translate("Control", "-160\342\204\203", nullptr));
+        cmb_t->setItemText(9, QApplication::translate("Control", "-180\342\204\203", nullptr));
+
+        btn_auto->setText(QApplication::translate("Control", "Auto Control", nullptr));
+        lbl_t_select->setText(QApplication::translate("Control", "Temperature select", nullptr));
     } // retranslateUi
 
 };

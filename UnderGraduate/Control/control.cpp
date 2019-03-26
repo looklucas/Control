@@ -10,7 +10,6 @@ Control::Control(QWidget *parent) :
 {
     ui->setupUi(this);
     instantAiCtrl = nullptr;
-    instantDiCtrl = nullptr;
     instantDoCtrl = nullptr;
 
     graph_t = new SimpleGraph(ui->graphFrame);
@@ -56,6 +55,8 @@ Control::Control(QWidget *parent) :
     connect(ui->btn_duty_2, SIGNAL(clicked()), this, SLOT(btn_duty_click_2()));
     connect(ui->btn_open_2, SIGNAL(clicked()), this, SLOT(btn_open_click_2()));
     connect(ui->btn_close_2, SIGNAL(clicked()), this, SLOT(btn_close_click_2()));
+    connect(ui->btn_auto, SIGNAL(clicked()), this, SLOT(btn_auto_click()));
+    connect(ui->cmb_t, SIGNAL(currentIndexChanged(int)), this, SLOT(Auto_T_Changed(int)));
 
     //control the sampling
     connect(ui->btn_temp_start, SIGNAL(clicked()), this, SLOT(btn_start_click()));
@@ -63,7 +64,7 @@ Control::Control(QWidget *parent) :
     connect(ui->btn_temp_end, SIGNAL(clicked()), this, SLOT(btn_end_click()));
 
     //control the communication
-    connect(ui->cmb_port, SIGNAL(currentIndexChanged(int)), this, SLOT(PortChanged(int)));
+    connect(ui->cmb_port, SIGNAL(currentIndexChanged(int)), this, SLOT(PortChanged()));
     connect(timer_flow, SIGNAL(timeout()), this, SLOT(ReadFlow()));
 }
 
@@ -73,10 +74,6 @@ Control::~Control()
     if (instantAiCtrl != nullptr)
     {
         instantAiCtrl->Dispose();
-    }
-    if (instantDiCtrl != nullptr)
-    {
-        instantDiCtrl->Dispose();
     }
     if (instantDoCtrl != nullptr)
     {
@@ -132,11 +129,19 @@ void Control::Initialize()
     ui->btn_open_2->setEnabled(true);
     ui->btn_close_2->setEnabled(true);
     mode_2 = 1;
+    auto_activate = false;
+    ui->btn_auto->setEnabled(auto_activate);
+    ui->cmb_t->setEnabled(auto_activate);
+    auto_stable = false;
+    temperature_before = 20;
+    temperature[0] = 20;
+    cmp_t = ui->cmb_t->currentIndex() * (-20.0);
+    //qDebug()<<"cmb_t index = "<<ui->cmb_t->currentIndex();
 
     //graph set
     graph_t->m_xCordTimeDiv = (ui->sld_x_scale->value()/10.0) * 1000 / 10;
-    graph_t->m_yCordRangeMax = 50;
-    graph_t->m_yCordRangeMin = -50;
+    graph_t->m_yCordRangeMax = 10;
+    graph_t->m_yCordRangeMin = -10;
     m_yCordRangeMid = ui->sld_y_center->value()-150.0;
     graph_t->Clear();
     graph_p->m_xCordTimeDiv = (ui->sld_x_scale->value()/10.0) * 1000 / 10;
@@ -150,14 +155,12 @@ void Control::Initialize()
     ui->btn_temp_pause->setEnabled(false);
     ui->btn_temp_end->setEnabled(false);
 
-    //digital input/output
+    //digital output
     ui->lbl_do_pic->setAutoFillBackground(true);
-    ui->lbl_do_pic_2->setAutoFillBackground(true);
+    ui->lbl_do_pic_2->setAutoFillBackground(true);    
     QPixmap pixMap_open(":/Resources/open.png");
-    QPixmap pixMap_close(":/Resources/close.png");
     QPalette backPalette;
     backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
-    ui->lbl_di_pic->setPalette(backPalette);
     ui->lbl_do_pic->setPalette(backPalette);
     ui->lbl_do_pic_2->setPalette(backPalette);
 
@@ -166,7 +169,7 @@ void Control::Initialize()
     QListWidgetItem *item1 = nullptr;
     for (int i = 0; i < 1; i++)
     {
-        item1 = new QListWidgetItem(tr("0.00"), ui->listWidget);
+        item1 = new QListWidgetItem(tr("0.000"), ui->listWidget);
         item1->setBackgroundColor(SimpleGraph::lineColor[0]);
         item1->setSizeHint(QSize(70, 20));
         item1->setTextAlignment(Qt::AlignCenter);
@@ -217,6 +220,15 @@ void Control::Initialize()
                   <<"\t"<<"Flow(L/min)"<<endl;
         csvFile.close();
     }
+    str_v1 = tr("");
+    str_t = tr("");
+    str_v2 = tr("");
+    str_p = tr("");
+    str_cycle = tr("");
+    str_ratio = tr("");
+    str_cycle_2 = tr("");
+    str_ratio_2 = tr("");
+    str_f = "waiting...";
 }
 
 void Control::ConfigureDevice()
@@ -241,16 +253,6 @@ void Control::ConfigureDevice()
         channels->getItem(i).setValueRange(configure.valueRange);
     }
 
-    //Create instant_Di
-    if (instantDiCtrl == nullptr)
-    {
-      instantDiCtrl = InstantDiCtrl::Create();
-    }
-    ErrorCode errorCodeDi = instantDiCtrl->setSelectedDevice(selected);
-    CheckError(errorCodeDi);
-    errorCodeDi = instantDiCtrl->LoadProfile(configure.profilePath);
-    CheckError(errorCodeDi);
-
     //Create instant_Do
     if (instantDoCtrl == nullptr)
     {
@@ -272,9 +274,9 @@ void Control::CheckError(ErrorCode errorCode)
     }
 }
 
-void Control::PortChanged(int value)
+void Control::PortChanged()
 {
-    qDebug()<<"port changed";
+    //qDebug()<<"port changed";
 
     if(flow_port->isOpen())
     {
@@ -351,11 +353,6 @@ void Control::ReadFlow()
 
 void Control::TimerTicked()
 {
-    QPixmap pixMap_open(":/Resources/open.png");
-    QPixmap pixMap_close(":/Resources/close.png");
-    QPalette backPalette;
-    quint8 *portStates = new quint8[1];
-
     //Read ports and calculate values
     /*-----------------------------------------------------------------------------------------*/
     {
@@ -367,21 +364,21 @@ void Control::TimerTicked()
     {
         return;
     }
-    //Read the status of Di
-    ErrorCode errorCode2 = Success;
-    errorCode2 = instantDiCtrl->Read(0, 1, portStates);
-    CheckError(errorCode2);
-    if (errorCode != Success)
-    {
-        return;
-    }
 
     //calculate the temperature and pressure frome voltage
-    temperature[0] = (scaledData[0]-2.5)*8.0;
+    temperature[0] = (scaledData[0]);
     graph_t->Chart(temperature, 1, 1, 10 / 1000.0);
     pressure[0] = scaledData[5]/5.0*6.0-0.064013;
     graph_p->Chart(pressure, 1, 1, 10 / 1000.0);
 
+    //activate the auto control function when the temperature is low enough
+    //activate only once
+    if((!auto_activate) && (temperature[0]<-5))
+    {
+        auto_activate = true;
+        ui->btn_auto->setEnabled(auto_activate);
+        ui->cmb_t->setEnabled(auto_activate);
+    }
 
     }/*----------------------------------------------------------------------------------------*/
 
@@ -399,7 +396,7 @@ void Control::TimerTicked()
     //for(int i = 0; i < 1; i++)
     {
         item = ui->listWidget->item(0);
-        str.sprintf("%.2f", temperature[0]);
+        str.sprintf("%.3f", temperature[0]);
         dataStr = str;
         if (str.length() > 7)
         {
@@ -407,7 +404,7 @@ void Control::TimerTicked()
         }
         item->setText(dataStr);
     }
-    item->setText(tr(""));
+    //item->setText(tr(""));
     //for(int i = 5; i < 6; i++)
     {
         item = ui->listWidget_2->item(0);
@@ -429,19 +426,7 @@ void Control::TimerTicked()
         }
         item->setText(dataStr);
     }
-
-    datain[0] = *portStates;
-    if(datain[0] & 0x01)
-    {
-        backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
-        ui->lbl_di_pic->setPalette(backPalette);
-    }
-    else
-    {
-        backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
-        ui->lbl_di_pic->setPalette(backPalette);
-    }
-    }/*----------------------------------------------------------------------------------------*/
+    }/*---------------------------------------------------------------------------------------*/
 
     //output the time, original voltage, pressure and Do status to txt file
     /*----------------------------------------------------------------------------------------*/
@@ -465,25 +450,14 @@ void Control::TimerTicked()
         duty_status_2 = counter_open_2>0?1:2;
     }
 
-    QString str_v1 = tr("");
-    //str_v1.sprintf("%.4f", scaledData[0]);
-    str_v1.sprintf("virtual");
-    QString str_t;
-    //str_t.sprintf("%.4f",temperature[0]);
-    str_t.sprintf("virtual");
 
-    QString str_v2 = tr("");
+    str_v1.sprintf("%.4f", scaledData[0]);
+    str_t.sprintf("%.4f",temperature[0]);
     str_v2.sprintf("%.4f", scaledData[5]);
-    QString str_p;
     str_p.sprintf("%.4f",pressure[0]);
-
-    QString str_cycle;
     str_cycle.sprintf("%.1f",ui->sld_cycle->value()/10.0);
-    QString str_ratio;
     str_ratio.sprintf("%.2f", 1.0/(1.0+ui->sld_ratio->value()/10.0));
-    QString str_cycle_2;
     str_cycle_2.sprintf("%.1f",ui->sld_cycle_2->value()/10.0);
-    QString str_ratio_2;
     str_ratio_2.sprintf("%.2f", 1.0/(1.0+ui->sld_ratio_2->value()/10.0));
 
     QFile csvFile(OutputPath);
@@ -639,37 +613,29 @@ void Control::DutyControl()
     QPalette backPalette;
     if(mode == 1)
     {
-        quint8 data_tmp[1];
-        data_tmp[0] = dataout[0] | 0x01;
         dataout[0] = dataout[0] | 0x01;
         ErrorCode errorCode = Success;
-        errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
+        errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
         CheckError(errorCode);
         backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
-        ui->lbl_do_pic->setPalette(backPalette);
-
-    }
+        ui->lbl_do_pic->setPalette(backPalette);    }
     else if (mode == 3)
     {
-        quint8 data_tmp[1];
-        data_tmp[0] = dataout[0] & 0xFE;
         dataout[0] = dataout[0] & 0xFE;
         ErrorCode errorCode = Success;
-        errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
+        errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
         CheckError(errorCode);
         backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
         ui->lbl_do_pic->setPalette(backPalette);
     }
     else
     {
-        quint8 data_tmp[1];
         if(counter_open>0 && counter_close>1)
         {
             counter_open--;
-            data_tmp[0] = dataout[0] | 0x01;
             dataout[0] = dataout[0] | 0x01;
             ErrorCode errorCode = Success;
-            errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
+            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
             CheckError(errorCode);
             backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
             ui->lbl_do_pic->setPalette(backPalette);
@@ -677,10 +643,9 @@ void Control::DutyControl()
         else if (counter_open == 0 && counter_close>1)
         {
             counter_close--;
-            data_tmp[0] = dataout[0] & 0xFE;
             dataout[0] = dataout[0] & 0xFE;
             ErrorCode errorCode = Success;
-            errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
+            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
             CheckError(errorCode);
             backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
             ui->lbl_do_pic->setPalette(backPalette);
@@ -697,95 +662,7 @@ void Control::DutyControl()
         }
         update_time = QDateTime::currentDateTime();
         update_time_string = update_time.toString("yyyy_MM_dd_hh_mm_ss_z");
-        qDebug()<<counter_open<<" and "<<counter_close<<"   Time: "<<update_time_string;
-
-    }
-}
-
-void Control::btn_duty_click_2()
-{
-    mode_2 = 2;
-    counter_open_2 = qRound(((ui->sld_cycle_2->value()/10.0)*1/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
-    counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
-}
-
-void Control::btn_open_click_2()
-{
-    mode_2 = 1;
-}
-
-void Control::btn_close_click_2()
-{
-    mode_2 = 3;
-}
-
-void Control::DutyControl_2()
-{
-    //mode 1: keep open
-    //mode 2: control
-    //mode 3: keep close
-
-    QPixmap pixMap_open(":/Resources/open.png");
-    QPixmap pixMap_close(":/Resources/close.png");
-    QPalette backPalette;
-    if(mode_2 == 1)
-    {
-        quint8 data_tmp[1];
-        data_tmp[0] = dataout[0] | 0x10;
-        dataout[0] = dataout[0] | 0x10;
-        ErrorCode errorCode = Success;
-        errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
-        CheckError(errorCode);
-        backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
-        ui->lbl_do_pic_2->setPalette(backPalette);
-
-    }
-    else if (mode_2 == 3)
-    {
-        quint8 data_tmp[1];
-        data_tmp[0] = dataout[0] & 0xEF;
-        dataout[0] = dataout[0] & 0xEF;
-        ErrorCode errorCode = Success;
-        errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
-        CheckError(errorCode);
-        backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
-        ui->lbl_do_pic_2->setPalette(backPalette);
-    }
-    else
-    {
-        quint8 data_tmp[1];
-        if(counter_open_2>0 && counter_close_2>1)
-        {
-            counter_open_2--;
-            data_tmp[0] = dataout[0] | 0x10;
-            dataout[0] = dataout[0] | 0x10;
-            ErrorCode errorCode = Success;
-            errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
-            CheckError(errorCode);
-            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
-            ui->lbl_do_pic_2->setPalette(backPalette);
-        }
-        else if (counter_open_2 == 0 && counter_close_2>1)
-        {
-            counter_close_2--;
-            data_tmp[0] = dataout[0] & 0xEF;
-            dataout[0] = dataout[0] & 0xEF;
-            ErrorCode errorCode = Success;
-            errorCode = instantDoCtrl->Write(0, 1, &data_tmp[0]);
-            CheckError(errorCode);
-            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
-            ui->lbl_do_pic_2->setPalette(backPalette);
-        }
-        else if (counter_open_2 == 0 && counter_close_2 == 1)
-        {
-            counter_open_2 = qRound(((ui->sld_cycle_2->value()/10.0)*1/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
-            counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
-        }
-        else
-        {
-            counter_open_2 = qRound(((ui->sld_cycle_2->value()/10.0)*1/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
-            counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
-        }
+        //qDebug()<<counter_open<<" and "<<counter_close<<"   Time: "<<update_time_string;
     }
 }
 
@@ -804,7 +681,7 @@ void Control::edit_cycle_change()
     double new_cycle = ui->lbl_cycle_show->text().toDouble();
     //qDebug()<<new_open;
     QString str = tr("");
-    if(new_cycle<0.1 || new_cycle>100)
+    if(new_cycle<0.1 || new_cycle>50)
     {
         new_cycle = old_cycle;
     }
@@ -836,7 +713,7 @@ void Control::edit_ratio_change()
     double new_ratio = ui->lbl_ratio_show->text().toDouble();
     //qDebug()<<new_open;
     QString str = tr("");
-    if(new_ratio<0 || new_ratio>100)
+    if(new_ratio<0 || new_ratio>20)
     {
         new_ratio = old_ratio;
     }
@@ -849,6 +726,119 @@ void Control::edit_ratio_change()
     old_ratio = new_ratio;
     //qDebug()<<new_ratio;
     //qDebug()<<ui->sld_ratio->value();
+}
+
+void Control::btn_duty_click_2()
+{
+    mode_2 = 2;
+    counter_open_2 = qRound(((ui->sld_cycle_2->value()/10.0)*1/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+    counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+}
+
+void Control::btn_open_click_2()
+{
+    mode_2 = 1;
+}
+
+void Control::btn_close_click_2()
+{
+    mode_2 = 3;
+}
+
+void Control::DutyControl_2()
+{
+    //mode 1: keep open
+    //mode 2: control
+    //mode 3: keep close
+
+    QPixmap pixMap_open(":/Resources/open.png");
+    QPixmap pixMap_close(":/Resources/close.png");
+    QPalette backPalette;
+    if(auto_stable)
+    {
+        if(((temperature[0]-cmp_t) * (temperature_before - cmp_t)) < 0)
+        {
+            //inverse the valve 2 status
+            dataout[0] = dataout[0] ^ 0x10;
+            ErrorCode errorCode = Success;
+            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+            CheckError(errorCode);
+            if (dataout[0] & 0x10) 
+            {
+                backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+                ui->lbl_do_pic_2->setPalette(backPalette);
+            }
+            else
+            {
+                backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
+                ui->lbl_do_pic_2->setPalette(backPalette);
+            }    
+            temperature_before = temperature[0];
+        }
+        else if(temperature_before != temperature[0])
+        {
+            temperature_before = temperature[0];
+        }
+        else
+        {
+            return;
+        }
+        
+    }
+    else
+    {    
+        if(mode_2 == 1)
+        {
+            dataout[0] = dataout[0] | 0x10;
+            ErrorCode errorCode = Success;
+            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+            CheckError(errorCode);
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+            ui->lbl_do_pic_2->setPalette(backPalette);
+        }
+        else if (mode_2 == 3)
+        {
+            dataout[0] = dataout[0] & 0xEF;
+            ErrorCode errorCode = Success;
+            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+            CheckError(errorCode);
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
+            ui->lbl_do_pic_2->setPalette(backPalette);
+        }
+        else//mode_2 == 2
+        {
+            if(counter_open_2>0 && counter_close_2>1)
+            {
+                counter_open_2--;
+                dataout[0] = dataout[0] | 0x10;
+                ErrorCode errorCode = Success;
+                errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+                CheckError(errorCode);
+                backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+                ui->lbl_do_pic_2->setPalette(backPalette);
+            }
+            else if (counter_open_2 == 0 && counter_close_2>1)
+            {
+                counter_close_2--;
+                dataout[0] = dataout[0] & 0xEF;
+                ErrorCode errorCode = Success;
+                errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+                CheckError(errorCode);
+                backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
+                ui->lbl_do_pic_2->setPalette(backPalette);
+            }
+            else if (counter_open_2 == 0 && counter_close_2 == 1)
+            {
+                counter_open_2 = qRound(((ui->sld_cycle_2->value()/10.0)*1/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+                counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+            }
+            else
+            {
+                counter_open_2 = qRound(((ui->sld_cycle_2->value()/10.0)*1/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+                counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
+            }
+        }
+    }
 }
 
 void Control::sld_cycle_change_2(int value)
@@ -866,7 +856,7 @@ void Control::edit_cycle_change_2()
     double new_cycle_2 = ui->lbl_cycle_show_2->text().toDouble();
     //qDebug()<<new_open;
     QString str = tr("");
-    if(new_cycle_2<0.1 || new_cycle_2>10)
+    if(new_cycle_2<0.1 || new_cycle_2>50)
     {
         new_cycle_2 = old_cycle_2;
     }
@@ -895,7 +885,7 @@ void Control::edit_ratio_change_2()
     double new_ratio_2 = ui->lbl_ratio_show_2->text().toDouble();
     //qDebug()<<new_open;
     QString str = tr("");
-    if(new_ratio_2<0 || new_ratio_2>100)
+    if(new_ratio_2<0 || new_ratio_2>20)
     {
         new_ratio_2 = old_ratio_2;
     }
@@ -907,3 +897,57 @@ void Control::edit_ratio_change_2()
     counter_close_2 = qRound(((ui->sld_cycle_2->value()/10.0)*(ui->sld_ratio_2->value()/10.0)/(ui->sld_ratio_2->value()/10.0+1))*(1000.0/timer_control_interval_2));
     old_ratio_2 = new_ratio_2;
 }
+
+void Control::btn_auto_click()
+{
+    QPixmap pixMap_open(":/Resources/open.png");
+    QPixmap pixMap_close(":/Resources/close.png");
+    QPalette backPalette;
+
+    ui->btn_duty_2->setEnabled(!(ui->btn_duty_2->isEnabled()));
+    ui->btn_open_2->setEnabled(!(ui->btn_open_2->isEnabled()));
+    ui->btn_close_2->setEnabled(!(ui->btn_close_2->isEnabled()));
+    if(ui->btn_duty_2->isEnabled())
+    {
+        mode_2 = mode_before_auto;
+        auto_stable = false;
+    }
+    else
+    {
+        mode_before_auto = mode_2;//save mode_2 value
+        auto_stable = true;
+        temperature_before = temperature[0];
+        //ini the do needed for auto
+        qDebug()<<"start to auto control";
+        if(temperature[0] > cmp_t)
+        {
+            dataout[0] = dataout[0] | 0x10;
+            ErrorCode errorCode = Success;
+            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+            CheckError(errorCode);
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+            ui->lbl_do_pic_2->setPalette(backPalette);
+            //qDebug()<<"switch to open right away";
+            //qDebug()<<"tem[0] = "<<temperature[0]<<" tmp_b = "<<temperature_before;
+        }
+        else
+        {
+            dataout[0] = dataout[0] & 0xEF;
+            ErrorCode errorCode = Success;
+            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+            CheckError(errorCode);
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
+            ui->lbl_do_pic_2->setPalette(backPalette);
+            //qDebug()<<"switch to close right away";
+            //qDebug()<<"tem[0] = "<<temperature[0]<<" tmp_b = "<<temperature_before;
+        }
+        
+    }
+}
+
+void Control::Auto_T_Changed(int value)
+{
+    cmp_t = value * (-20.0);
+    //qDebug()<<"cmb_t index = "<<value;
+}
+
