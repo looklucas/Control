@@ -21,7 +21,7 @@ Control::Control(QWidget *parent) :
     {
         scaledData[i] = 0;
     }
-    
+
     //create timers
     timer = new QTimer(this);
     timer_control = new QTimer(this);
@@ -99,6 +99,7 @@ void Control::Initialize()
     dataout[0] = 0xFF;
 
     //initialize the valve 1
+    timer_control_interval = 10;
     ui->sld_cycle->setValue(10);
     str.sprintf("%.1f", ui->sld_cycle->value()/10.0);
     ui->lbl_cycle_show->setText(str);
@@ -115,6 +116,7 @@ void Control::Initialize()
     mode = 1;
 
     //initialize the valve 2
+    timer_control_interval_2 = 10;
     ui->sld_cycle_2->setValue(10);
     str.sprintf("%.1f", ui->sld_cycle_2->value()/10.0);
     ui->lbl_cycle_show_2->setText(str);
@@ -133,15 +135,23 @@ void Control::Initialize()
     ui->btn_auto->setEnabled(auto_activate);
     ui->cmb_t->setEnabled(auto_activate);
     auto_stable = false;
-    temperature_before = 20;
     temperature[0] = 20;
+    for(int i = 0; i < 10 ; i++)
+    {
+        temperature_save[i] = 20;
+        temperature_before[i] = 20;
+    }
+    temperature_before_average = 20;
+    temperature_average = 20;
     cmp_t = ui->cmb_t->currentIndex() * (-20.0);
     //qDebug()<<"cmb_t index = "<<ui->cmb_t->currentIndex();
 
     //graph set
+    timer_interval = 10;
+    graph_count = 0;
     graph_t->m_xCordTimeDiv = (ui->sld_x_scale->value()/10.0) * 1000 / 10;
-    graph_t->m_yCordRangeMax = 10;
-    graph_t->m_yCordRangeMin = -10;
+    graph_t->m_yCordRangeMax = 50;
+    graph_t->m_yCordRangeMin = -50;
     m_yCordRangeMid = ui->sld_y_center->value()-150.0;
     graph_t->Clear();
     graph_p->m_xCordTimeDiv = (ui->sld_x_scale->value()/10.0) * 1000 / 10;
@@ -157,7 +167,7 @@ void Control::Initialize()
 
     //digital output
     ui->lbl_do_pic->setAutoFillBackground(true);
-    ui->lbl_do_pic_2->setAutoFillBackground(true);    
+    ui->lbl_do_pic_2->setAutoFillBackground(true);
     QPixmap pixMap_open(":/Resources/open.png");
     QPalette backPalette;
     backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
@@ -166,31 +176,31 @@ void Control::Initialize()
 
     //real-time value show
     ui->listWidget->clear();
-    QListWidgetItem *item1 = nullptr;
+    QListWidgetItem *item_t = nullptr;
     for (int i = 0; i < 1; i++)
     {
-        item1 = new QListWidgetItem(tr("0.000"), ui->listWidget);
-        item1->setBackgroundColor(SimpleGraph::lineColor[0]);
-        item1->setSizeHint(QSize(70, 20));
-        item1->setTextAlignment(Qt::AlignCenter);
+        item_t = new QListWidgetItem(tr("0.00"), ui->listWidget);
+        item_t->setBackgroundColor(SimpleGraph::lineColor[0]);
+        item_t->setSizeHint(QSize(70, 20));
+        item_t->setTextAlignment(Qt::AlignCenter);
     }
     ui->listWidget_2->clear();
-    QListWidgetItem *item2 = nullptr;
+    QListWidgetItem *item_p = nullptr;
     for (int i = 0; i < 1; i++)
     {
-        item2 = new QListWidgetItem(tr("0.000"), ui->listWidget_2);
-        item2->setBackgroundColor(SimpleGraph::lineColor[1]);
-        item2->setSizeHint(QSize(70, 20));
-        item2->setTextAlignment(Qt::AlignCenter);
+        item_p = new QListWidgetItem(tr("0.000"), ui->listWidget_2);
+        item_p->setBackgroundColor(SimpleGraph::lineColor[1]);
+        item_p->setSizeHint(QSize(70, 20));
+        item_p->setTextAlignment(Qt::AlignCenter);
     }
     ui->listWidget_3->clear();
-    QListWidgetItem *item3 = nullptr;
+    QListWidgetItem *item_f = nullptr;
     for (int i = 0; i < 1; i++)
     {
-        item3 = new QListWidgetItem(tr("0.000"), ui->listWidget_3);
-        item3->setBackgroundColor(SimpleGraph::lineColor[2]);
-        item3->setSizeHint(QSize(70, 20));
-        item3->setTextAlignment(Qt::AlignCenter);
+        item_f = new QListWidgetItem(tr("0.000"), ui->listWidget_3);
+        item_f->setBackgroundColor(SimpleGraph::lineColor[2]);
+        item_f->setSizeHint(QSize(70, 20));
+        item_f->setTextAlignment(Qt::AlignCenter);
     }
 
     flow_port = new QSerialPort(this);
@@ -300,7 +310,7 @@ void Control::PortChanged()
     }
     else
     {
-        QMessageBox::about(nullptr, "warning", "测温相关串口没有打开！");
+        QMessageBox::about(nullptr, "warning", "流量测量串口没有打开！");
         return;
     }
     str_f = "waiting...";
@@ -366,10 +376,28 @@ void Control::TimerTicked()
     }
 
     //calculate the temperature and pressure frome voltage
-    temperature[0] = (scaledData[0]);
-    graph_t->Chart(temperature, 1, 1, 10 / 1000.0);
+    temperature[0] = (scaledData[0]*12.44-84.91);
+    temperature_average = 0;
+    temperature_before_average = 0;
+    for(int i = 0; i < 9 ; i++)
+    {
+        temperature_average = temperature_average + temperature_save[i];
+        temperature_before_average = temperature_before_average + temperature_before[i];
+        temperature_before[i] = temperature_save[i];
+        temperature_save[i] = temperature_save[i+1];
+    }
+    temperature_before[9] = temperature_save[9];
+    temperature_save[9] = temperature[0];
+    temperature_average = (temperature_average + temperature_save[9])/10.0;
+    temperature_before_average = (temperature_before_average + temperature_before[9])/10.0;
+    
     pressure[0] = scaledData[5]/5.0*6.0-0.064013;
-    graph_p->Chart(pressure, 1, 1, 10 / 1000.0);
+    if(graph_count == 0)
+    {
+        graph_t->Chart(temperature, 1, 1, timer_interval * 10 / 10.0 / 1000.0);
+        graph_p->Chart(pressure, 1, 1, timer_interval * 10 / 10.0/ 1000.0);
+    }
+    graph_count = (graph_count + 1) % 10;
 
     //activate the auto control function when the temperature is low enough
     //activate only once
@@ -396,7 +424,7 @@ void Control::TimerTicked()
     //for(int i = 0; i < 1; i++)
     {
         item = ui->listWidget->item(0);
-        str.sprintf("%.3f", temperature[0]);
+        str.sprintf("%.2f", temperature[0]);
         dataStr = str;
         if (str.length() > 7)
         {
@@ -432,27 +460,26 @@ void Control::TimerTicked()
     /*----------------------------------------------------------------------------------------*/
     {
     int duty_status;
-    if(mode == 1)
-        duty_status = 1;
-    else if(mode == 3)
-        duty_status = 2;
-    else
-    {
-        duty_status = counter_open>0?1:2;
-    }
     int duty_status_2;
-    if(mode_2 == 1)
-        duty_status_2 = 1;
-    else if(mode_2 == 3)
-        duty_status_2 = 2;
+    if(dataout[0] & 0x01)
+    {
+        duty_status = 1;
+    }
     else
     {
-        duty_status_2 = counter_open_2>0?1:2;
+        duty_status = 2;
+    }
+    if(dataout[0] & 0x10)
+    {
+        duty_status_2 = 1;
+    }
+    else
+    {
+        duty_status_2 = 2;
     }
 
-
-    str_v1.sprintf("%.4f", scaledData[0]);
-    str_t.sprintf("%.4f",temperature[0]);
+    str_v1.sprintf("%.3f", scaledData[0]);
+    str_t.sprintf("%.2f",temperature[0]);
     str_v2.sprintf("%.4f", scaledData[5]);
     str_p.sprintf("%.4f",pressure[0]);
     str_cycle.sprintf("%.1f",ui->sld_cycle->value()/10.0);
@@ -554,10 +581,8 @@ void Control::sld_y_center_change_2(int value)//for graph_p
 
 void Control::btn_start_click()
 {
-    timer->start(100);
-    timer_control_interval = 10;
+    timer->start(timer_interval);
     timer_control->start(timer_control_interval);
-    timer_control_interval_2 = 10;
     timer_control_2->start(timer_control_interval_2);
     timer_flow->start(4000);//every 4s read flow
     ui->btn_temp_start->setEnabled(false);
@@ -756,14 +781,14 @@ void Control::DutyControl_2()
     QPalette backPalette;
     if(auto_stable)
     {
-        if(((temperature[0]-cmp_t) * (temperature_before - cmp_t)) < 0)
+        if(((temperature_average-cmp_t) * (temperature_before_average - cmp_t)) < 0)
         {
             //inverse the valve 2 status
             dataout[0] = dataout[0] ^ 0x10;
             ErrorCode errorCode = Success;
             errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
             CheckError(errorCode);
-            if (dataout[0] & 0x10) 
+            if (dataout[0] & 0x10)
             {
                 backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
                 ui->lbl_do_pic_2->setPalette(backPalette);
@@ -772,21 +797,16 @@ void Control::DutyControl_2()
             {
                 backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
                 ui->lbl_do_pic_2->setPalette(backPalette);
-            }    
-            temperature_before = temperature[0];
-        }
-        else if(temperature_before != temperature[0])
-        {
-            temperature_before = temperature[0];
+            }
         }
         else
         {
             return;
         }
-        
+
     }
     else
-    {    
+    {
         if(mode_2 == 1)
         {
             dataout[0] = dataout[0] | 0x10;
@@ -916,7 +936,6 @@ void Control::btn_auto_click()
     {
         mode_before_auto = mode_2;//save mode_2 value
         auto_stable = true;
-        temperature_before = temperature[0];
         //ini the do needed for auto
         qDebug()<<"start to auto control";
         if(temperature[0] > cmp_t)
@@ -941,7 +960,7 @@ void Control::btn_auto_click()
             //qDebug()<<"switch to close right away";
             //qDebug()<<"tem[0] = "<<temperature[0]<<" tmp_b = "<<temperature_before;
         }
-        
+
     }
 }
 

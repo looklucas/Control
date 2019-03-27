@@ -37,22 +37,33 @@ public:
 
 private:
     Ui::Control *ui;
-    SimpleGraph *graph_t;
-    SimpleGraph *graph_p;
+
+    //connect USB-4704
     ConfigureDialog *configDialog;
     ConfigureParameter configure;
+
+    //input data and output control signal
     InstantAiCtrl *instantAiCtrl;
+    InstantDoCtrl *instantDoCtrl;
     double scaledData[16];
+    quint8 dataout[1];
+    
+    //timer for graph, showing real-time value and write out 
+    QTimer *timer;
+    int timer_interval;//unit :ms
+    int graph_count;
+    SimpleGraph *graph_t;
+    SimpleGraph *graph_p;
     double temperature[1];// one channel for temperature
+    double temperature_save[10];//save temperature at (t0,t0-0.01/0.02/0.03.../0.09)s
+    double temperature_average;//the average of tempetature_save
+    double temperature_before[10];//save temperature at (t0-0.01/0.02/0.03.../0.1)s
+    double temperature_before_average;//the average of tempetature_before
     double pressure[1];// one channel for pressure
     double m_yCordRangeMid;
     double m_yCordRangeMid_2;
-    double Time_total;
-    QTimer *timer;
 
-    InstantDoCtrl *instantDoCtrl;
-    quint8 dataout[1];
-
+    //control valve 1
     int mode;
     QTimer *timer_control;
     int timer_control_interval;//unit: ms
@@ -61,6 +72,7 @@ private:
     double old_ratio;
     double old_cycle;
 
+    //control valve 2
     int mode_2;
     QTimer *timer_control_2;
     int timer_control_interval_2;//unit: ms
@@ -72,8 +84,7 @@ private:
     bool auto_stable;//enable or disable auto control
     double cmp_t;//the temprature to be compared during auto control
     int mode_before_auto;//save the mode_2 before auto
-    double temperature_before;//save temperature at (t0-0.1)s
-
+    
     //current time
     QDateTime update_time;
     QString update_time_string;
