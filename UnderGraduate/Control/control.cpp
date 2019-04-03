@@ -135,15 +135,11 @@ void Control::Initialize()
     ui->btn_auto->setEnabled(auto_activate);
     ui->cmb_t->setEnabled(auto_activate);
     auto_stable = false;
-    temperature[0] = 20;
-    for(int i = 0; i < 10 ; i++)
-    {
-        temperature_save[i] = 20;
-        temperature_before[i] = 20;
-    }
-    temperature_before_average = 20;
-    temperature_average = 20;
-    cmp_t = ui->cmb_t->currentIndex() * (-20.0);
+    first_temperature = true;
+    cmp_t = ui->cmb_t->currentIndex() * (-10.0) - 10.0;
+    cmp_t_win_width = 1;
+    cmp_t_win_h = cmp_t + cmp_t_win_width/2.0;
+    cmp_t_win_l = cmp_t - cmp_t_win_width/2.0;
     //qDebug()<<"cmb_t index = "<<ui->cmb_t->currentIndex();
 
     //graph set
@@ -377,20 +373,32 @@ void Control::TimerTicked()
 
     //calculate the temperature and pressure frome voltage
     temperature[0] = (scaledData[0]*12.44-84.91);
-    temperature_average = 0;
-    temperature_before_average = 0;
+    if(first_temperature)
+    {
+        for(int i = 0; i < 9 ; i++)
+        {
+            temperature_save[i] = temperature[0];
+        }
+        temperature_average = temperature[0];
+        first_temperature = false;
+    }
+    memcpy(temperature_before,temperature_save,10);
+    temperature_before_average = temperature_average;
     for(int i = 0; i < 9 ; i++)
     {
-        temperature_average = temperature_average + temperature_save[i];
-        temperature_before_average = temperature_before_average + temperature_before[i];
-        temperature_before[i] = temperature_save[i];
         temperature_save[i] = temperature_save[i+1];
     }
-    temperature_before[9] = temperature_save[9];
-    temperature_save[9] = temperature[0];
-    temperature_average = (temperature_average + temperature_save[9])/10.0;
-    temperature_before_average = (temperature_before_average + temperature_before[9])/10.0;
-    
+    if(fabs(temperature[0] - temperature_save[8] ) > 20)
+    {
+        temperature_save[9] = temperature_save[8];
+    }
+    else
+    {
+        temperature_save[9] = temperature[0];
+    }
+    temperature_average = (temperature_average * 10.0 + temperature_save[9] - temperature_before[0])/10.0;
+    //qDebug()<<"temperature_before_average = "<<temperature_before_average;
+    //qDebug()<<"temperature_average = "<<temperature_average;
     pressure[0] = scaledData[5]/5.0*6.0-0.064013;
     if(graph_count == 0)
     {
@@ -781,29 +789,32 @@ void Control::DutyControl_2()
     QPalette backPalette;
     if(auto_stable)
     {
-        if(((temperature_average-cmp_t) * (temperature_before_average - cmp_t)) < 0)
+        /*
+        qDebug()<<"dataout[0] = "<<dataout[0];
+        qDebug()<<"temperature_before_average during auto = "<<temperature_before_average;
+        qDebug()<<"temperature_average during auto = "<<temperature_average;
+        qDebug()<<"cmp_t_h = "<<cmp_t_win_h;
+        qDebug()<<"cmp_t_l = "<<cmp_t_win_l;
+        */
+        if((dataout[0] & 0x10) && (temperature_average < cmp_t_win_h) && (temperature_before_average > cmp_t_win_h) )
         {
-            //inverse the valve 2 status
-            dataout[0] = dataout[0] ^ 0x10;
-            ErrorCode errorCode = Success;
-            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
-            CheckError(errorCode);
-            if (dataout[0] & 0x10)
-            {
-                backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
-                ui->lbl_do_pic_2->setPalette(backPalette);
-            }
-            else
-            {
-                backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
-                ui->lbl_do_pic_2->setPalette(backPalette);
-            }
+            dataout[0] = dataout[0] & 0xEF;
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
+            ui->lbl_do_pic_2->setPalette(backPalette);
+        }
+        else if(((~dataout[0]) & 0x10) && (temperature_average > cmp_t_win_l) && (temperature_before_average < cmp_t_win_l) )
+        {
+            dataout[0] = dataout[0] | 0x10;
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+            ui->lbl_do_pic_2->setPalette(backPalette);
         }
         else
         {
-            return;
+            return ;
         }
-
+        ErrorCode errorCode = Success;
+        errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+        CheckError(errorCode);
     }
     else
     {
@@ -938,7 +949,8 @@ void Control::btn_auto_click()
         auto_stable = true;
         //ini the do needed for auto
         qDebug()<<"start to auto control";
-        if(temperature[0] > cmp_t)
+        /*
+        if(temperature[0] < cmp_t)
         {
             dataout[0] = dataout[0] | 0x10;
             ErrorCode errorCode = Success;
@@ -960,13 +972,22 @@ void Control::btn_auto_click()
             //qDebug()<<"switch to close right away";
             //qDebug()<<"tem[0] = "<<temperature[0]<<" tmp_b = "<<temperature_before;
         }
-
+        */
+        dataout[0] = dataout[0] & 0xEF;
+        ErrorCode errorCode = Success;
+        errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+        CheckError(errorCode);
+        backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
+        ui->lbl_do_pic_2->setPalette(backPalette);
     }
 }
 
 void Control::Auto_T_Changed(int value)
 {
-    cmp_t = value * (-20.0);
+    cmp_t = value * (-10.0) - 10.0;
+    cmp_t_win_width = 1;
+    cmp_t_win_h = cmp_t + cmp_t_win_width/2.0;
+    cmp_t_win_l = cmp_t - cmp_t_win_width/2.0;
     //qDebug()<<"cmb_t index = "<<value;
 }
 

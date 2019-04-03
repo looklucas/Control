@@ -54,6 +54,7 @@ private:
     int graph_count;
     SimpleGraph *graph_t;
     SimpleGraph *graph_p;
+    bool first_temperature;
     double temperature[1];// one channel for temperature
     double temperature_save[10];//save temperature at (t0,t0-0.01/0.02/0.03.../0.09)s
     double temperature_average;//the average of tempetature_save
@@ -82,7 +83,10 @@ private:
     double old_cycle_2;
     bool auto_activate;//activate the auto control function
     bool auto_stable;//enable or disable auto control
-    double cmp_t;//the temprature to be compared during auto control
+    double cmp_t;//the temprature to be compared, selected by user
+    double cmp_t_win_h;//the temprature to be compared during auto control
+    double cmp_t_win_l;//the temprature to be compared during auto control
+    double cmp_t_win_width;
     int mode_before_auto;//save the mode_2 before auto
     
     //current time

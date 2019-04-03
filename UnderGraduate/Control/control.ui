@@ -1286,11 +1286,11 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="maxCount">
-     <number>10</number>
+     <number>20</number>
     </property>
     <item>
      <property name="text">
-      <string>0℃</string>
+      <string>-10℃</string>
      </property>
     </item>
     <item>
@@ -1300,7 +1300,17 @@
     </item>
     <item>
      <property name="text">
+      <string>-30℃</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
       <string>-40℃</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>-50℃</string>
      </property>
     </item>
     <item>
@@ -1310,7 +1320,17 @@
     </item>
     <item>
      <property name="text">
+      <string>-70℃</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
       <string>-80℃</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>-90℃</string>
      </property>
     </item>
     <item>
@@ -1320,22 +1340,17 @@
     </item>
     <item>
      <property name="text">
+      <string>-110℃</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
       <string>-120℃</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>-140℃</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>-160℃</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>-180℃</string>
+      <string>-130℃</string>
      </property>
     </item>
    </widget>
