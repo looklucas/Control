@@ -144,7 +144,7 @@ void Control::Initialize()
 
     //graph set
     timer_interval = 10;
-    graph_count = 0;
+    show_count = 0;
     graph_t->m_xCordTimeDiv = (ui->sld_x_scale->value()/10.0) * 1000 / 10;
     graph_t->m_yCordRangeMax = 50;
     graph_t->m_yCordRangeMin = -50;
@@ -400,12 +400,6 @@ void Control::TimerTicked()
     //qDebug()<<"temperature_before_average = "<<temperature_before_average;
     //qDebug()<<"temperature_average = "<<temperature_average;
     pressure[0] = scaledData[5]/5.0*6.0-0.064013;
-    if(graph_count == 0)
-    {
-        graph_t->Chart(temperature, 1, 1, timer_interval * 10 / 10.0 / 1000.0);
-        graph_p->Chart(pressure, 1, 1, timer_interval * 10 / 10.0/ 1000.0);
-    }
-    graph_count = (graph_count + 1) % 10;
 
     //activate the auto control function when the temperature is low enough
     //activate only once
@@ -428,40 +422,47 @@ void Control::TimerTicked()
     QString str = tr("");
     QListWidgetItem *item;
     QString dataStr = tr("0.00");
-
-    //for(int i = 0; i < 1; i++)
+    
+    if(show_count == 0)
     {
-        item = ui->listWidget->item(0);
-        str.sprintf("%.2f", temperature[0]);
-        dataStr = str;
-        if (str.length() > 7)
+        //for(int i = 0; i < 1; i++)
         {
-            dataStr = str.left(7);
+            item = ui->listWidget->item(0);
+            str.sprintf("%.2f", temperature[0]);
+            dataStr = str;
+            if (str.length() > 7)
+            {
+                dataStr = str.left(7);
+            }
+            item->setText(dataStr);
         }
-        item->setText(dataStr);
-    }
-    //item->setText(tr(""));
-    //for(int i = 5; i < 6; i++)
-    {
-        item = ui->listWidget_2->item(0);
-        str.sprintf("%.3f", pressure[0]);
-        dataStr = str;
-        if (str.length() > 7)
+        //item->setText(tr(""));
+        //for(int i = 5; i < 6; i++)
         {
-            dataStr = str.left(7);
+            item = ui->listWidget_2->item(0);
+            str.sprintf("%.3f", pressure[0]);
+            dataStr = str;
+            if (str.length() > 7)
+            {
+                dataStr = str.left(7);
+            }
+            item->setText(dataStr);
         }
-        item->setText(dataStr);
-    }
-    //show real-time flow
-    {
-        item = ui->listWidget_3->item(0);
-        dataStr = str_f;
-        if (str_f.length() > 7)
+        //show real-time flow
         {
-            dataStr = str_f.left(7);
+            item = ui->listWidget_3->item(0);
+            dataStr = str_f;
+            if (str_f.length() > 7)
+            {
+                dataStr = str_f.left(7);
+            }
+            item->setText(dataStr);
         }
-        item->setText(dataStr);
+        graph_t->Chart(temperature, 1, 1, timer_interval * 10 / 10.0 / 1000.0);
+        graph_p->Chart(pressure, 1, 1, timer_interval * 10 / 10.0/ 1000.0);
     }
+    show_count = (show_count + 1) % 10;
+    
     }/*---------------------------------------------------------------------------------------*/
 
     //output the time, original voltage, pressure and Do status to txt file

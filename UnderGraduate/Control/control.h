@@ -51,7 +51,7 @@ private:
     //timer for graph, showing real-time value and write out 
     QTimer *timer;
     int timer_interval;//unit :ms
-    int graph_count;
+    int show_count;
     SimpleGraph *graph_t;
     SimpleGraph *graph_p;
     bool first_temperature;
