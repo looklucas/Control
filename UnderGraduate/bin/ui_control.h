@@ -454,7 +454,7 @@ public:
         cmb_t->addItem(QString());
         cmb_t->addItem(QString());
         cmb_t->setObjectName(QStringLiteral("cmb_t"));
-        cmb_t->setGeometry(QRect(830, 640, 75, 30));
+        cmb_t->setGeometry(QRect(830, 640, 80, 30));
         sizePolicy.setHeightForWidth(cmb_t->sizePolicy().hasHeightForWidth());
         cmb_t->setSizePolicy(sizePolicy);
         cmb_t->setMaximumSize(QSize(150, 50));

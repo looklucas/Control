@@ -137,7 +137,7 @@ void Control::Initialize()
     auto_stable = false;
     first_temperature = true;
     cmp_t = ui->cmb_t->currentIndex() * (-10.0) - 10.0;
-    cmp_t_win_width = 1;
+    cmp_t_win_width = 2;
     cmp_t_win_h = cmp_t + cmp_t_win_width/2.0;
     cmp_t_win_l = cmp_t - cmp_t_win_width/2.0;
     //qDebug()<<"cmb_t index = "<<ui->cmb_t->currentIndex();
@@ -372,7 +372,7 @@ void Control::TimerTicked()
     }
 
     //calculate the temperature and pressure frome voltage
-    temperature[0] = (scaledData[0]*12.44-84.91);
+    temperature[0] = (scaledData[0]*140+1093);
     if(first_temperature)
     {
         for(int i = 0; i < 9 ; i++)
@@ -498,7 +498,7 @@ void Control::TimerTicked()
 
     QFile csvFile(OutputPath);
     QTextStream textStream(&csvFile);
-    if (csvFile.open(QIODevice::Text | QIODevice::Append))
+    if (show_count==0 && csvFile.open(QIODevice::Text | QIODevice::Append))
     {
         textStream<<update_time_string
                   <<"\t"<<str_v1<<"\t"<<str_t
@@ -986,7 +986,7 @@ void Control::btn_auto_click()
 void Control::Auto_T_Changed(int value)
 {
     cmp_t = value * (-10.0) - 10.0;
-    cmp_t_win_width = 1;
+    cmp_t_win_width = 2;
     cmp_t_win_h = cmp_t + cmp_t_win_width/2.0;
     cmp_t_win_l = cmp_t - cmp_t_win_width/2.0;
     //qDebug()<<"cmb_t index = "<<value;
