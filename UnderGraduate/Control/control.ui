@@ -325,7 +325,7 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="text">
-     <string>10s/格</string>
+     <string>10.0s/格</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbl_center">
@@ -648,6 +648,19 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>80</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>PushButton</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QSlider" name="sld_y_center_2">
     <property name="geometry">
@@ -1266,7 +1279,7 @@
      <rect>
       <x>830</x>
       <y>640</y>
-      <width>80</width>
+      <width>150</width>
       <height>30</height>
      </rect>
     </property>
@@ -1281,6 +1294,9 @@
       <width>150</width>
       <height>50</height>
      </size>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::WheelFocus</enum>
     </property>
     <property name="styleSheet">
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>

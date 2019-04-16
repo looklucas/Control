@@ -62,6 +62,7 @@ public:
     QLabel *lbl_y_max_2;
     QLabel *lbl_temp_2;
     QFrame *graphFrame_2;
+    QPushButton *pushButton;
     QSlider *sld_y_center_2;
     QSlider *sld_y_scale_2;
     QLabel *lbl_center_2;
@@ -274,6 +275,9 @@ public:
         graphFrame_2->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
         graphFrame_2->setFrameShape(QFrame::StyledPanel);
         graphFrame_2->setFrameShadow(QFrame::Raised);
+        pushButton = new QPushButton(graphFrame_2);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setGeometry(QRect(170, 80, 93, 28));
         sld_y_center_2 = new QSlider(centralWidget);
         sld_y_center_2->setObjectName(QStringLiteral("sld_y_center_2"));
         sld_y_center_2->setGeometry(QRect(920, 240, 20, 141));
@@ -454,10 +458,11 @@ public:
         cmb_t->addItem(QString());
         cmb_t->addItem(QString());
         cmb_t->setObjectName(QStringLiteral("cmb_t"));
-        cmb_t->setGeometry(QRect(830, 640, 80, 30));
+        cmb_t->setGeometry(QRect(830, 640, 150, 30));
         sizePolicy.setHeightForWidth(cmb_t->sizePolicy().hasHeightForWidth());
         cmb_t->setSizePolicy(sizePolicy);
         cmb_t->setMaximumSize(QSize(150, 50));
+        cmb_t->setFocusPolicy(Qt::WheelFocus);
         cmb_t->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         cmb_t->setMaxCount(20);
         btn_auto = new QPushButton(centralWidget);
@@ -489,7 +494,7 @@ public:
         lbl_y_max->setText(QApplication::translate("Control", "50.0\342\204\203", nullptr));
         lbl_ratio_present->setText(QApplication::translate("Control", "0.40", nullptr));
         btn_open->setText(QApplication::translate("Control", "Open valve 1", nullptr));
-        lbl_x_present->setText(QApplication::translate("Control", "10s/\346\240\274", nullptr));
+        lbl_x_present->setText(QApplication::translate("Control", "10.0s/\346\240\274", nullptr));
         lbl_center->setText(QApplication::translate("Control", "Temperature Center\357\274\232", nullptr));
         lbl_center_show->setText(QApplication::translate("Control", "0.0\342\204\203", nullptr));
         btn_temp_pause->setText(QApplication::translate("Control", "Pause Recording", nullptr));
@@ -505,6 +510,7 @@ public:
         lbl_scale_2->setText(QApplication::translate("Control", "Pressure Range\357\274\232", nullptr));
         lbl_y_max_2->setText(QApplication::translate("Control", "1MPa", nullptr));
         lbl_temp_2->setText(QApplication::translate("Control", "Pressure\357\274\210MPa\357\274\211", nullptr));
+        pushButton->setText(QApplication::translate("Control", "PushButton", nullptr));
         lbl_center_2->setText(QApplication::translate("Control", "Pressure Center\357\274\232", nullptr));
         lbl_y_min_2->setText(QApplication::translate("Control", "0MPa", nullptr));
         lbl_scale_show_2->setText(QApplication::translate("Control", "1Mpa", nullptr));

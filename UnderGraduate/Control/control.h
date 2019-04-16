@@ -55,11 +55,14 @@ private:
     SimpleGraph *graph_t;
     SimpleGraph *graph_p;
     bool first_temperature;
+
     double temperature[1];// one channel for temperature
-    double temperature_save[10];//save temperature at (t0,t0-0.01/0.02/0.03.../0.09)s
+    double temperature_before;
+    /*double temperature_save[3];//save temperature at (t0,t0-0.01/0.02/0.03.../0.09)s
     double temperature_average;//the average of tempetature_save
-    double temperature_before[10];//save temperature at (t0-0.01/0.02/0.03.../0.1)s
+    double temperature_before[3];//save temperature at (t0-0.01/0.02/0.03.../0.1)s
     double temperature_before_average;//the average of tempetature_before
+    */
     double pressure[1];// one channel for pressure
     double m_yCordRangeMid;
     double m_yCordRangeMid_2;

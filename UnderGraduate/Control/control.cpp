@@ -1,4 +1,4 @@
-#include "control.h"
+ #include "control.h"
 #include "ui_control.h"
 #include <QMessageBox>
 #include <QTimer>
@@ -145,6 +145,8 @@ void Control::Initialize()
     //graph set
     timer_interval = 10;
     show_count = 0;
+    temperature[0] = 20;
+    pressure[0] = 0;
     graph_t->m_xCordTimeDiv = (ui->sld_x_scale->value()/10.0) * 1000 / 10;
     graph_t->m_yCordRangeMax = 50;
     graph_t->m_yCordRangeMin = -50;
@@ -372,38 +374,45 @@ void Control::TimerTicked()
     }
 
     //calculate the temperature and pressure frome voltage
-    temperature[0] = (scaledData[0]*140+1093);
+    temperature_before = temperature[0];
+    temperature[0] = (scaledData[0]*13.9182-77.4274);
     if(first_temperature)
     {
-        for(int i = 0; i < 9 ; i++)
+        /*
+        for(int i = 0; i < 3 ; i++)
         {
             temperature_save[i] = temperature[0];
         }
         temperature_average = temperature[0];
+        */
+        temperature_before = temperature[0];
         first_temperature = false;
     }
-    memcpy(temperature_before,temperature_save,10);
+    /*
+    memcpy(temperature_before,temperature_save,3);
     temperature_before_average = temperature_average;
-    for(int i = 0; i < 9 ; i++)
+    for(int i = 0; i < 2 ; i++)
     {
         temperature_save[i] = temperature_save[i+1];
     }
+
     if(fabs(temperature[0] - temperature_save[8] ) > 20)
     {
         temperature_save[9] = temperature_save[8];
     }
     else
     {
-        temperature_save[9] = temperature[0];
+        temperature_save[2] = temperature[0];
     }
-    temperature_average = (temperature_average * 10.0 + temperature_save[9] - temperature_before[0])/10.0;
+    temperature_average = (temperature_save[2] +temperature_save[1]+temperature_save[0])/3.0;
     //qDebug()<<"temperature_before_average = "<<temperature_before_average;
     //qDebug()<<"temperature_average = "<<temperature_average;
+    */
     pressure[0] = scaledData[5]/5.0*6.0-0.064013;
 
     //activate the auto control function when the temperature is low enough
     //activate only once
-    if((!auto_activate) && (temperature[0]<-5))
+    if((!auto_activate) && (temperature[0]<-100))
     {
         auto_activate = true;
         ui->btn_auto->setEnabled(auto_activate);
@@ -498,7 +507,7 @@ void Control::TimerTicked()
 
     QFile csvFile(OutputPath);
     QTextStream textStream(&csvFile);
-    if (show_count==0 && csvFile.open(QIODevice::Text | QIODevice::Append))
+    if (show_count==1 && csvFile.open(QIODevice::Text | QIODevice::Append))
     {
         textStream<<update_time_string
                   <<"\t"<<str_v1<<"\t"<<str_t
@@ -518,7 +527,7 @@ void Control::sld_x_scale_change(int value)
     graph_p->m_xCordTimeDiv = (value/10.0) * 1000 / 10;
 
     QString str = tr("");
-    str.sprintf("%.1f", ui->sld_x_scale->value()/(1000/100.0));
+    str.sprintf("%.1f", ui->sld_x_scale->value()/10.0);
     ui->lbl_x_present->setText(str+tr("s/格"));
 }
 
@@ -790,20 +799,32 @@ void Control::DutyControl_2()
     QPalette backPalette;
     if(auto_stable)
     {
-        /*
+
         qDebug()<<"dataout[0] = "<<dataout[0];
-        qDebug()<<"temperature_before_average during auto = "<<temperature_before_average;
-        qDebug()<<"temperature_average during auto = "<<temperature_average;
+        qDebug()<<"temperature_before_average during auto = "<<temperature_before;
+        qDebug()<<"temperature_average during auto = "<<temperature[0];
         qDebug()<<"cmp_t_h = "<<cmp_t_win_h;
         qDebug()<<"cmp_t_l = "<<cmp_t_win_l;
-        */
-        if((dataout[0] & 0x10) && (temperature_average < cmp_t_win_h) && (temperature_before_average > cmp_t_win_h) )
+
+        if((dataout[0] & 0x10) && (temperature_before > cmp_t_win_h) && (temperature[0]< cmp_t_win_h) )
         {
             dataout[0] = dataout[0] & 0xEF;
             backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
             ui->lbl_do_pic_2->setPalette(backPalette);
         }
-        else if(((~dataout[0]) & 0x10) && (temperature_average > cmp_t_win_l) && (temperature_before_average < cmp_t_win_l) )
+        else if((dataout[0] & 0x10) && (temperature[0] < cmp_t_win_l))
+        {
+            dataout[0] = dataout[0] & 0xEF;
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
+            ui->lbl_do_pic_2->setPalette(backPalette);
+        }
+        else if(((~dataout[0]) & 0x10) && (temperature_before < cmp_t_win_l)  && (temperature[0] > cmp_t_win_l))
+        {
+            dataout[0] = dataout[0] | 0x10;
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+            ui->lbl_do_pic_2->setPalette(backPalette);
+        }
+        else if(((~dataout[0]) & 0x10) && (temperature[0] > cmp_t_win_h))
         {
             dataout[0] = dataout[0] | 0x10;
             backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
