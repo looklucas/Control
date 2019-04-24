@@ -375,7 +375,7 @@ void Control::TimerTicked()
 
     //calculate the temperature and pressure frome voltage
     temperature_before = temperature[0];
-    temperature[0] = (scaledData[0]*13.9182-77.4274);
+    temperature[0] = (scaledData[0]*13.2185-65.1768);
     if(first_temperature)
     {
         /*
