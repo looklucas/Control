@@ -806,37 +806,49 @@ void Control::DutyControl_2()
         qDebug()<<"cmp_t_h = "<<cmp_t_win_h;
         qDebug()<<"cmp_t_l = "<<cmp_t_win_l;
 
-        if((dataout[0] & 0x10) && (temperature_before > cmp_t_win_h) && (temperature[0]< cmp_t_win_h) )
-        {
-            dataout[0] = dataout[0] & 0xEF;
-            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
-            ui->lbl_do_pic_2->setPalette(backPalette);
-        }
-        else if((dataout[0] & 0x10) && (temperature[0] < cmp_t_win_l))
-        {
-            dataout[0] = dataout[0] & 0xEF;
-            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
-            ui->lbl_do_pic_2->setPalette(backPalette);
-        }
-        else if(((~dataout[0]) & 0x10) && (temperature_before < cmp_t_win_l)  && (temperature[0] > cmp_t_win_l))
+        if( temperature[0] > cmp_t_win_h)
         {
             dataout[0] = dataout[0] | 0x10;
+            ErrorCode errorCode = Success;
+            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+            CheckError(errorCode);
             backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
             ui->lbl_do_pic_2->setPalette(backPalette);
         }
-        else if(((~dataout[0]) & 0x10) && (temperature[0] > cmp_t_win_h))
+        else if (temperature[0] < cmp_t_win_l)
         {
-            dataout[0] = dataout[0] | 0x10;
-            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+            dataout[0] = dataout[0] & 0xEF;
+            ErrorCode errorCode = Success;
+            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+            CheckError(errorCode);
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
             ui->lbl_do_pic_2->setPalette(backPalette);
         }
         else
         {
-            return ;
+            if(temperature_before > cmp_t_win_h)
+            {
+            dataout[0] = dataout[0] & 0xEF;
+            ErrorCode errorCode = Success;
+            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+            CheckError(errorCode);
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
+            ui->lbl_do_pic_2->setPalette(backPalette);
+            }
+            else if(temperature_before < cmp_t_win_l)
+            {
+            dataout[0] = dataout[0] | 0x10;
+            ErrorCode errorCode = Success;
+            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+            CheckError(errorCode);
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+            ui->lbl_do_pic_2->setPalette(backPalette);
+            }
+            else
+            {
+                return;
+            }
         }
-        ErrorCode errorCode = Success;
-        errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
-        CheckError(errorCode);
     }
     else
     {
@@ -971,8 +983,8 @@ void Control::btn_auto_click()
         auto_stable = true;
         //ini the do needed for auto
         qDebug()<<"start to auto control";
-        /*
-        if(temperature[0] < cmp_t)
+
+        if( temperature[0] > cmp_t_win_h)
         {
             dataout[0] = dataout[0] | 0x10;
             ErrorCode errorCode = Success;
@@ -980,10 +992,8 @@ void Control::btn_auto_click()
             CheckError(errorCode);
             backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
             ui->lbl_do_pic_2->setPalette(backPalette);
-            //qDebug()<<"switch to open right away";
-            //qDebug()<<"tem[0] = "<<temperature[0]<<" tmp_b = "<<temperature_before;
         }
-        else
+        else if (temperature[0] < cmp_t_win_l)
         {
             dataout[0] = dataout[0] & 0xEF;
             ErrorCode errorCode = Success;
@@ -991,16 +1001,11 @@ void Control::btn_auto_click()
             CheckError(errorCode);
             backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
             ui->lbl_do_pic_2->setPalette(backPalette);
-            //qDebug()<<"switch to close right away";
-            //qDebug()<<"tem[0] = "<<temperature[0]<<" tmp_b = "<<temperature_before;
         }
-        */
-        dataout[0] = dataout[0] & 0xEF;
-        ErrorCode errorCode = Success;
-        errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
-        CheckError(errorCode);
-        backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
-        ui->lbl_do_pic_2->setPalette(backPalette);
+        else
+        {
+            return;
+        }
     }
 }
 
