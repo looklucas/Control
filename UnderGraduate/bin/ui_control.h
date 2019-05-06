@@ -96,6 +96,8 @@ public:
     QComboBox *cmb_t;
     QPushButton *btn_auto;
     QLabel *lbl_t_select;
+    QLineEdit *lbl_width;
+    QLabel *lbl_width_show;
 
     void setupUi(QMainWindow *Control)
     {
@@ -473,7 +475,85 @@ public:
         lbl_t_select->setObjectName(QStringLiteral("lbl_t_select"));
         lbl_t_select->setGeometry(QRect(830, 605, 161, 21));
         lbl_t_select->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
+        lbl_width = new QLineEdit(centralWidget);
+        lbl_width->setObjectName(QStringLiteral("lbl_width"));
+        lbl_width->setGeometry(QRect(909, 680, 51, 20));
+        lbl_width->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
+        lbl_width_show = new QLabel(centralWidget);
+        lbl_width_show->setObjectName(QStringLiteral("lbl_width_show"));
+        lbl_width_show->setGeometry(QRect(830, 680, 161, 21));
+        lbl_width_show->setStyleSheet(QString::fromUtf8("font: 10pt \"\345\276\256\350\275\257\351\233\205\351\273\221\";"));
         Control->setCentralWidget(centralWidget);
+        lbl_width_show->raise();
+        lbl_temp->raise();
+        lbl_do->raise();
+        btn_temp_end->raise();
+        sld_cycle->raise();
+        lbl_cycle->raise();
+        second->raise();
+        sld_ratio->raise();
+        btn_duty->raise();
+        lbl_do_pic->raise();
+        lbl_scale->raise();
+        lbl_y_max->raise();
+        sld_x_scale->raise();
+        sld_y_center->raise();
+        graphFrame->raise();
+        lbl_ratio_present->raise();
+        btn_open->raise();
+        lbl_x_present->raise();
+        lbl_center->raise();
+        lbl_center_show->raise();
+        btn_temp_pause->raise();
+        lbl_ratio_1_1->raise();
+        btn_temp_start->raise();
+        lbl_ratio_1_2->raise();
+        sld_y_scale->raise();
+        lbl_scale_show->raise();
+        lbl_y_min->raise();
+        btn_close->raise();
+        lbl_y_mid->raise();
+        lbl_time_label->raise();
+        lbl_time->raise();
+        listWidget->raise();
+        lbl_scale_2->raise();
+        lbl_y_max_2->raise();
+        lbl_temp_2->raise();
+        graphFrame_2->raise();
+        sld_y_center_2->raise();
+        sld_y_scale_2->raise();
+        lbl_center_2->raise();
+        lbl_y_min_2->raise();
+        lbl_scale_show_2->raise();
+        lbl_center_show_2->raise();
+        lbl_y_mid_2->raise();
+        listWidget_2->raise();
+        lbl_real_p->raise();
+        lbl_ratio_show->raise();
+        lbl_cycle_show->raise();
+        lbl_real_f->raise();
+        listWidget_3->raise();
+        lbl_port->raise();
+        cmb_port->raise();
+        lbl_cycle_show_2->raise();
+        lbl_ratio_present_2->raise();
+        sld_ratio_2->raise();
+        sld_cycle_2->raise();
+        lbl_cycle_2->raise();
+        lbl_ratio_2_2->raise();
+        lbl_ratio_show_2->raise();
+        lbl_ratio_2_1->raise();
+        second_2->raise();
+        lbl_do_pic_2->raise();
+        lbl_do_2->raise();
+        btn_open_2->raise();
+        btn_close_2->raise();
+        btn_duty_2->raise();
+        lbl_real_t->raise();
+        cmb_t->raise();
+        btn_auto->raise();
+        lbl_t_select->raise();
+        lbl_width->raise();
 
         retranslateUi(Control);
 
@@ -550,6 +630,8 @@ public:
 
         btn_auto->setText(QApplication::translate("Control", "Auto Control", nullptr));
         lbl_t_select->setText(QApplication::translate("Control", "Temperature select", nullptr));
+        lbl_width->setText(QApplication::translate("Control", "0.4", nullptr));
+        lbl_width_show->setText(QApplication::translate("Control", "Width\357\274\232              s", nullptr));
     } // retranslateUi
 
 };

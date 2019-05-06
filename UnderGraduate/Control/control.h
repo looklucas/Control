@@ -91,7 +91,9 @@ private:
     double cmp_t_win_l;//the temprature to be compared during auto control
     double cmp_t_win_width;
     int mode_before_auto;//save the mode_2 before auto
-    
+    int count_auto;
+    int width;
+
     //current time
     QDateTime update_time;
     QString update_time_string;
@@ -113,6 +115,7 @@ private:
     QByteArray command1;
     QByteArray command2;
 
+
 private slots:
     void TimerTicked();
     //control the valve 1
@@ -126,6 +129,7 @@ private slots:
     void btn_close_click();
     //control the valve 2
     void DutyControl_2();
+    void Width_Changed();
     void sld_cycle_change_2(int value);
     void edit_cycle_change_2();
     void sld_ratio_change_2(int value);

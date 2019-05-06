@@ -1402,6 +1402,108 @@
      <string>Temperature select</string>
     </property>
    </widget>
+   <widget class="QLineEdit" name="lbl_width">
+    <property name="geometry">
+     <rect>
+      <x>909</x>
+      <y>680</y>
+      <width>51</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>0.4</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_width_show">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>680</y>
+      <width>161</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Width：              s</string>
+    </property>
+   </widget>
+   <zorder>lbl_width_show</zorder>
+   <zorder>lbl_temp</zorder>
+   <zorder>lbl_do</zorder>
+   <zorder>btn_temp_end</zorder>
+   <zorder>sld_cycle</zorder>
+   <zorder>lbl_cycle</zorder>
+   <zorder>second</zorder>
+   <zorder>sld_ratio</zorder>
+   <zorder>btn_duty</zorder>
+   <zorder>lbl_do_pic</zorder>
+   <zorder>lbl_scale</zorder>
+   <zorder>lbl_y_max</zorder>
+   <zorder>sld_x_scale</zorder>
+   <zorder>sld_y_center</zorder>
+   <zorder>graphFrame</zorder>
+   <zorder>lbl_ratio_present</zorder>
+   <zorder>btn_open</zorder>
+   <zorder>lbl_x_present</zorder>
+   <zorder>lbl_center</zorder>
+   <zorder>lbl_center_show</zorder>
+   <zorder>btn_temp_pause</zorder>
+   <zorder>lbl_ratio_1_1</zorder>
+   <zorder>btn_temp_start</zorder>
+   <zorder>lbl_ratio_1_2</zorder>
+   <zorder>sld_y_scale</zorder>
+   <zorder>lbl_scale_show</zorder>
+   <zorder>lbl_y_min</zorder>
+   <zorder>btn_close</zorder>
+   <zorder>lbl_y_mid</zorder>
+   <zorder>lbl_time_label</zorder>
+   <zorder>lbl_time</zorder>
+   <zorder>listWidget</zorder>
+   <zorder>lbl_scale_2</zorder>
+   <zorder>lbl_y_max_2</zorder>
+   <zorder>lbl_temp_2</zorder>
+   <zorder>graphFrame_2</zorder>
+   <zorder>sld_y_center_2</zorder>
+   <zorder>sld_y_scale_2</zorder>
+   <zorder>lbl_center_2</zorder>
+   <zorder>lbl_y_min_2</zorder>
+   <zorder>lbl_scale_show_2</zorder>
+   <zorder>lbl_center_show_2</zorder>
+   <zorder>lbl_y_mid_2</zorder>
+   <zorder>listWidget_2</zorder>
+   <zorder>lbl_real_p</zorder>
+   <zorder>lbl_ratio_show</zorder>
+   <zorder>lbl_cycle_show</zorder>
+   <zorder>lbl_real_f</zorder>
+   <zorder>listWidget_3</zorder>
+   <zorder>lbl_port</zorder>
+   <zorder>cmb_port</zorder>
+   <zorder>lbl_cycle_show_2</zorder>
+   <zorder>lbl_ratio_present_2</zorder>
+   <zorder>sld_ratio_2</zorder>
+   <zorder>sld_cycle_2</zorder>
+   <zorder>lbl_cycle_2</zorder>
+   <zorder>lbl_ratio_2_2</zorder>
+   <zorder>lbl_ratio_show_2</zorder>
+   <zorder>lbl_ratio_2_1</zorder>
+   <zorder>second_2</zorder>
+   <zorder>lbl_do_pic_2</zorder>
+   <zorder>lbl_do_2</zorder>
+   <zorder>btn_open_2</zorder>
+   <zorder>btn_close_2</zorder>
+   <zorder>btn_duty_2</zorder>
+   <zorder>lbl_real_t</zorder>
+   <zorder>cmb_t</zorder>
+   <zorder>btn_auto</zorder>
+   <zorder>lbl_t_select</zorder>
+   <zorder>lbl_width</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

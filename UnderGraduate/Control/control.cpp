@@ -57,6 +57,8 @@ Control::Control(QWidget *parent) :
     connect(ui->btn_close_2, SIGNAL(clicked()), this, SLOT(btn_close_click_2()));
     connect(ui->btn_auto, SIGNAL(clicked()), this, SLOT(btn_auto_click()));
     connect(ui->cmb_t, SIGNAL(currentIndexChanged(int)), this, SLOT(Auto_T_Changed(int)));
+    connect(ui->lbl_width, SIGNAL(editingFinished()), this, SLOT(Width_Changed()));
+
 
     //control the sampling
     connect(ui->btn_temp_start, SIGNAL(clicked()), this, SLOT(btn_start_click()));
@@ -137,14 +139,16 @@ void Control::Initialize()
     auto_stable = false;
     first_temperature = true;
     cmp_t = ui->cmb_t->currentIndex() * (-10.0) - 10.0;
-    cmp_t_win_width = 2;
-    cmp_t_win_h = cmp_t + cmp_t_win_width/2.0;
-    cmp_t_win_l = cmp_t - cmp_t_win_width/2.0;
+    //cmp_t_win_width = 1;
+    //cmp_t_win_h = cmp_t + cmp_t_win_width/2.0;
+    //cmp_t_win_l = cmp_t - cmp_t_win_width/2.0;
     //qDebug()<<"cmb_t index = "<<ui->cmb_t->currentIndex();
+    count_auto = 0;
 
     //graph set
-    timer_interval = 10;
+    timer_interval = 100;
     show_count = 0;
+    width = 0.4;
     temperature[0] = 20;
     pressure[0] = 0;
     graph_t->m_xCordTimeDiv = (ui->sld_x_scale->value()/10.0) * 1000 / 10;
@@ -375,7 +379,7 @@ void Control::TimerTicked()
 
     //calculate the temperature and pressure frome voltage
     temperature_before = temperature[0];
-    temperature[0] = (scaledData[0]*13.2185-65.1768);
+    temperature[0] = (scaledData[0]*13.5622-74.8617);
     if(first_temperature)
     {
         /*
@@ -432,7 +436,7 @@ void Control::TimerTicked()
     QListWidgetItem *item;
     QString dataStr = tr("0.00");
     
-    if(show_count == 0)
+    //if(show_count == 0)
     {
         //for(int i = 0; i < 1; i++)
         {
@@ -467,10 +471,10 @@ void Control::TimerTicked()
             }
             item->setText(dataStr);
         }
-        graph_t->Chart(temperature, 1, 1, timer_interval * 10 / 10.0 / 1000.0);
-        graph_p->Chart(pressure, 1, 1, timer_interval * 10 / 10.0/ 1000.0);
+        graph_t->Chart(temperature, 1, 1, timer_interval * 10.0 / timer_interval / 1000.0);
+        graph_p->Chart(pressure, 1, 1, timer_interval * 10.0 / timer_interval/ 1000.0);
     }
-    show_count = (show_count + 1) % 10;
+    //show_count = (show_count + 1) % 10;
     
     }/*---------------------------------------------------------------------------------------*/
 
@@ -507,7 +511,7 @@ void Control::TimerTicked()
 
     QFile csvFile(OutputPath);
     QTextStream textStream(&csvFile);
-    if (show_count==1 && csvFile.open(QIODevice::Text | QIODevice::Append))
+    if (csvFile.open(QIODevice::Text | QIODevice::Append))
     {
         textStream<<update_time_string
                   <<"\t"<<str_v1<<"\t"<<str_t
@@ -788,6 +792,12 @@ void Control::btn_close_click_2()
     mode_2 = 3;
 }
 
+void Control::Width_Changed()
+{
+    width = ui->lbl_width->text().toDouble() * 100.0+0.5;
+    qDebug()<<"width = "<<width;
+}
+
 void Control::DutyControl_2()
 {
     //mode 1: keep open
@@ -800,13 +810,37 @@ void Control::DutyControl_2()
     if(auto_stable)
     {
 
-        qDebug()<<"dataout[0] = "<<dataout[0];
-        qDebug()<<"temperature_before_average during auto = "<<temperature_before;
-        qDebug()<<"temperature_average during auto = "<<temperature[0];
-        qDebug()<<"cmp_t_h = "<<cmp_t_win_h;
-        qDebug()<<"cmp_t_l = "<<cmp_t_win_l;
+        //qDebug()<<"dataout[0] = "<<dataout[0];
+        //qDebug()<<"temperature_before_average during auto = "<<temperature_before;
+        //qDebug()<<"temperature_average during auto = "<<temperature[0];
+        //qDebug()<<"cmp_t_h = "<<cmp_t_win_h;
+        //qDebug()<<"cmp_t_l = "<<cmp_t_win_l;
 
-        if( temperature[0] > cmp_t_win_h)
+        if((temperature[0] > cmp_t) && (temperature_before < cmp_t) && (count_auto == 0))
+        {
+            count_auto = 1;
+        }
+        if((count_auto > 0) && (count_auto < width + 1))
+        {
+            dataout[0] = dataout[0] | 0x10;
+            ErrorCode errorCode = Success;
+            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+            CheckError(errorCode);
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_open));
+            ui->lbl_do_pic_2->setPalette(backPalette);
+            count_auto = (count_auto + 1) % width;
+        }
+        else
+        {
+            dataout[0] = dataout[0] & 0xEF;
+            ErrorCode errorCode = Success;
+            errorCode = instantDoCtrl->Write(0, 1, &dataout[0]);
+            CheckError(errorCode);
+            backPalette.setBrush(this->backgroundRole(), QBrush(pixMap_close));
+            ui->lbl_do_pic_2->setPalette(backPalette);/* code */
+        }
+        
+        /*if( temperature[0] > cmp_t_win_h)
         {
             dataout[0] = dataout[0] | 0x10;
             ErrorCode errorCode = Success;
@@ -848,7 +882,7 @@ void Control::DutyControl_2()
             {
                 return;
             }
-        }
+        }*/
     }
     else
     {
@@ -1012,9 +1046,9 @@ void Control::btn_auto_click()
 void Control::Auto_T_Changed(int value)
 {
     cmp_t = value * (-10.0) - 10.0;
-    cmp_t_win_width = 2;
-    cmp_t_win_h = cmp_t + cmp_t_win_width/2.0;
-    cmp_t_win_l = cmp_t - cmp_t_win_width/2.0;
+    //cmp_t_win_width = 1;
+    //cmp_t_win_h = cmp_t + cmp_t_win_width/2.0;
+    //cmp_t_win_l = cmp_t - cmp_t_win_width/2.0;
     //qDebug()<<"cmb_t index = "<<value;
 }
 
