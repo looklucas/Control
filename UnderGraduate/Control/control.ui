@@ -1415,7 +1415,7 @@
      <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
     </property>
     <property name="text">
-     <string>0.4</string>
+     <string>0.40</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbl_width_show">

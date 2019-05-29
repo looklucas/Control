@@ -96,13 +96,13 @@ void SimpleGraph::paintEvent(QPaintEvent *event)
 	}
 	
 	QPoint *pstep = m_dataPointBuffer;
-	for (int i = 0; i < m_plotCount; i++)
+    for (int i = 0; i < m_plotCount; i++)
 	{
 		pen.setColor(SimpleGraph::lineColor[i]);
 		p.setPen(pen);
 		p.drawPolyline(pstep, m_copyDataCountPerChan);
 		pstep = pstep + rect().width() * 4 + 1;
-	}
+    }
 }
 
 void SimpleGraph::Chart(double *dataScaled, 
@@ -265,7 +265,7 @@ void SimpleGraph::MapDataPoints()
             int dataIndex = i * (rect().width() * 4 + 1) + index;
             m_dataPointBuffer[dataIndex].setY((long)ceil(YCordDividedRate * 
                 (m_yCordRangeMax - m_drawDataBuffer[(int)(m_plotCount * (index + m_mapDataIndexPerPlot + m_shiftCount) + i)])));
-            m_dataPointBuffer[dataIndex].setX((long)(index * m_xCordDividedRate));       
+            m_dataPointBuffer[dataIndex].setX((long)(index * m_xCordDividedRate));
         }
     }
 

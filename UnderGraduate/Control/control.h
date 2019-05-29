@@ -57,12 +57,11 @@ private:
     bool first_temperature;
 
     double temperature[1];// one channel for temperature
-    double temperature_before;
-    /*double temperature_save[3];//save temperature at (t0,t0-0.01/0.02/0.03.../0.09)s
+    double temperature_save[20];//save temperature at (t0,t0-0.1)s
     double temperature_average;//the average of tempetature_save
-    double temperature_before[3];//save temperature at (t0-0.01/0.02/0.03.../0.1)s
-    double temperature_before_average;//the average of tempetature_before
-    */
+    //double temperature_save_before[10];//save temperature at (t0-0.1,t0-0.2)s
+    double temperature_average_before;//the average of tempetature_before
+    bool warning;
     double pressure[1];// one channel for pressure
     double m_yCordRangeMid;
     double m_yCordRangeMid_2;
@@ -87,12 +86,18 @@ private:
     bool auto_activate;//activate the auto control function
     bool auto_stable;//enable or disable auto control
     double cmp_t;//the temprature to be compared, selected by user
-    double cmp_t_win_h;//the temprature to be compared during auto control
-    double cmp_t_win_l;//the temprature to be compared during auto control
-    double cmp_t_win_width;
+    //double cmp_t_win_h;//the temprature to be compared during auto control
+    //double cmp_t_win_l;//the temprature to be compared during auto control
+    //double cmp_t_win_width;
     int mode_before_auto;//save the mode_2 before auto
     int count_auto;
     int width;
+    /*
+    double temp_during_auto[100];//save the temperature during last period of auto control
+    int temp_order;
+    bool first_auto;
+    double average;
+    */
 
     //current time
     QDateTime update_time;

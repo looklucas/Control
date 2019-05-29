@@ -630,7 +630,7 @@ public:
 
         btn_auto->setText(QApplication::translate("Control", "Auto Control", nullptr));
         lbl_t_select->setText(QApplication::translate("Control", "Temperature select", nullptr));
-        lbl_width->setText(QApplication::translate("Control", "0.4", nullptr));
+        lbl_width->setText(QApplication::translate("Control", "0.40", nullptr));
         lbl_width_show->setText(QApplication::translate("Control", "Width\357\274\232              s", nullptr));
     } // retranslateUi
 
