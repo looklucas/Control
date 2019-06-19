@@ -133,7 +133,8 @@ void Control::Initialize()
     ui->btn_open_2->setEnabled(true);
     ui->btn_close_2->setEnabled(true);
     mode_2 = 1;
-    auto_activate = false;
+    auto_activate=true;
+    //auto_activate = false;
     ui->btn_auto->setEnabled(auto_activate);
     ui->cmb_t->setEnabled(auto_activate);
     auto_stable = false;
@@ -399,7 +400,7 @@ void Control::TimerTicked()
         temperature_save[i] = temperature_save[i+1];
     }
     temperature[0] = (scaledData[0]*25.975-77.889);
-    if(fabs(temperature[19]-temperature[0])>3)
+    if(fabs(temperature[19]-temperature[0])>5)
     {
         //temperature[0] = temperature_save[19];
         qDebug()<<"pulse in temperature[0]";
